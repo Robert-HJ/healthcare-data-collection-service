@@ -1,0 +1,23 @@
+# Local-only documents and supplied data
+/local-docs/
+/data/
+INPUT_DATA*.json
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Gradle and build output
+.gradle/
+build/
+out/
+
+# IDE and OS files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Logs
+*.log
