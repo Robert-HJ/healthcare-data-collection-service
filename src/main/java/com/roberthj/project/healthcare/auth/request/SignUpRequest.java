@@ -22,12 +22,22 @@ public record SignUpRequest(
         String email,
 
         @NotBlank(message = "비밀번호는 필수입니다.")
-        @Size(max = 50, message = "비밀번호는 50자 이하여야 합니다.")
+        @Size(min = 8, max = 50, message = "비밀번호는 8자 이상 50자 이하여야 합니다.")
         @Pattern(regexp = "^[\\x21-\\x7E]+$", message = "비밀번호는 영문, 숫자, 특수문자만 사용할 수 있습니다.")
         String password
 ) {
 
     public SignUpRequest {
-        email = email.trim().toLowerCase(Locale.ROOT);
+        if(name != null) {
+            name = name.trim();
+        }
+
+        if(nickname != null) {
+            nickname = nickname.trim();
+        }
+
+        if(email != null) {
+            email = email.trim().toLowerCase(Locale.ROOT);
+        }
     }
 }

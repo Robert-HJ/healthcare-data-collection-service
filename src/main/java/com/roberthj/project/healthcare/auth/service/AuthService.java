@@ -6,16 +6,19 @@ import com.roberthj.project.healthcare.member.domain.entity.Member;
 import com.roberthj.project.healthcare.member.domain.repository.MemberRepository;
 import com.roberthj.project.healthcare.member.exception.DuplicateEmailException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Locale;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    private static final String EMAIL_UNIQUE_CONSTRAINT = "uk_member_email";
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -37,6 +40,19 @@ public class AuthService {
                 UUID.randomUUID().toString()
         );
 
-        return SignUpResponse.from(memberRepository.save(member));
+        // 3. 동시 요청시 500에러가 아닌 기존과 동일한 400에러 응답을 위한 Catch.
+        try {
+            return SignUpResponse.from(memberRepository.save(member));
+        } catch (DataIntegrityViolationException exception) {
+            if (exception.getCause() instanceof ConstraintViolationException constraintViolationException) {
+                String constraintName = constraintViolationException.getConstraintName();
+                if (EMAIL_UNIQUE_CONSTRAINT.equals(constraintName)
+                        || constraintName != null && constraintName.endsWith("." + EMAIL_UNIQUE_CONSTRAINT)) {
+                    throw new DuplicateEmailException(exception);
+                }
+            }
+
+            throw exception;
+        }
     }
 }
