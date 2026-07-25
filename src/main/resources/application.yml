@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: healthcare-data-collection-service
+
+  profiles:
+    default: local
+
+  jpa:
+    open-in-view: false

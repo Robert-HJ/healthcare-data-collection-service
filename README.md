@@ -1,1 +1,1 @@
-# healthcare-data-collection-service
+# Healthcare Data Collection Service
