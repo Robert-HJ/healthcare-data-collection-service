@@ -14,3 +14,7 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
+
+jwt:
+  secret: "local-dev-hmac-secret-please-change-this-value-0123456789" # HS256 대칭키: 최소 32바이트(256bit) 이상
+  access-token-validity: PT1H # 토큰 만료 1시간
