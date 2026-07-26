@@ -36,6 +36,7 @@ public class AuthService {
 
     /**
      * 회원 가입
+     *
      * @param request 회원 가입 Request 객체
      * @return SignUpResponse
      */
@@ -43,7 +44,7 @@ public class AuthService {
     public SignUpResponse signUp(SignUpRequest request) {
 
         // 1. 이메일 중복 체크
-        if(memberRepository.existsByEmail(request.email())) {
+        if (memberRepository.existsByEmail(request.email())) {
             throw new AuthException(AuthErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
@@ -74,6 +75,7 @@ public class AuthService {
 
     /**
      * 로그인
+     *
      * @param request 로그인 Request 객체
      * @return SignInResponse
      */

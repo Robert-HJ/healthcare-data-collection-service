@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 인증되지 않은 요청(토큰 없음/무효/만료)을 공통 에러 형식으로 응답 - 401 UnAuthorized
+ * 인증되지 않은 요청(토큰 없음/무효/만료)을 공통 에러 형식으로 응답 - 401 Unauthorized
  */
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
