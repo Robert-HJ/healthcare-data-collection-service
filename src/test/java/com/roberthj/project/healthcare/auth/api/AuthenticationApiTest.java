@@ -1,7 +1,5 @@
 package com.roberthj.project.healthcare.auth.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.roberthj.project.healthcare.framework.utils.CommonUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.UUID;
 
@@ -29,6 +28,9 @@ class AuthenticationApiTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
     void loginReturnsAccessTokenAndMeExposesRecordKey() throws Exception {
         String email = signUp();
@@ -43,7 +45,7 @@ class AuthenticationApiTest {
                 .getResponse()
                 .getContentAsString();
 
-        String accessToken = CommonUtils.COMMON_MAPPER.readTree(responseBody).get("accessToken").asText();
+        String accessToken = objectMapper.readTree(responseBody).get("accessToken").stringValue();
 
         mockMvc.perform(get("/api/auth/me")
                         .header("Authorization", "Bearer " + accessToken))
