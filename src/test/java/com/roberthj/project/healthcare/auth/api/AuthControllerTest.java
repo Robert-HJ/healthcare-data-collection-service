@@ -66,7 +66,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorCode").value("MEMBER001"));
+                .andExpect(jsonPath("$.errorCode").value("AUTH004"));
     }
 
     private String signUpRequest(String email, String password) {

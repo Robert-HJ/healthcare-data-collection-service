@@ -1,7 +1,11 @@
 package com.roberthj.project.healthcare.auth.api;
 
+import com.roberthj.project.healthcare.auth.request.SignInRequest;
 import com.roberthj.project.healthcare.auth.request.SignUpRequest;
+import com.roberthj.project.healthcare.auth.response.MeResponse;
+import com.roberthj.project.healthcare.auth.response.SignInResponse;
 import com.roberthj.project.healthcare.auth.response.SignUpResponse;
+import com.roberthj.project.healthcare.auth.component.AccessTokenIssuer;
 import com.roberthj.project.healthcare.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +13,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,5 +35,20 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(authService.signUp(request));
+    }
+
+    @Operation(summary = "로그인")
+    @PostMapping("/sign-in")
+    public ResponseEntity<SignInResponse> signIn(@Valid @RequestBody SignInRequest request) {
+        return ResponseEntity.ok(authService.signIn(request));
+    }
+
+    @Operation(summary = "내 인증 정보 조회")
+    @GetMapping("/me")
+    public ResponseEntity<MeResponse> me(@AuthenticationPrincipal Jwt jwt) {
+        return ResponseEntity.ok(new MeResponse(
+                Long.valueOf(jwt.getSubject()),
+                jwt.getClaimAsString(AccessTokenIssuer.RECORD_KEY_CLAIM)
+        ));
     }
 }

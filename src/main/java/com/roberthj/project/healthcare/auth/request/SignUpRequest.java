@@ -28,15 +28,15 @@ public record SignUpRequest(
 ) {
 
     public SignUpRequest {
-        if(name != null) {
+        if (name != null) {
             name = name.trim();
         }
 
-        if(nickname != null) {
+        if (nickname != null) {
             nickname = nickname.trim();
         }
 
-        if(email != null) {
+        if (email != null) {
             email = email.trim().toLowerCase(Locale.ROOT);
         }
     }

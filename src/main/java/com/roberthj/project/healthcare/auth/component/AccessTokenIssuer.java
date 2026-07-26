@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.auth.security;
+package com.roberthj.project.healthcare.auth.component;
 
 import com.roberthj.project.healthcare.framework.properties.JwtProperties;
 import lombok.RequiredArgsConstructor;

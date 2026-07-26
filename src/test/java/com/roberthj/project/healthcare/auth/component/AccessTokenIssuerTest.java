@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.auth.security;
+package com.roberthj.project.healthcare.auth.component;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.roberthj.project.healthcare.framework.properties.JwtProperties;
