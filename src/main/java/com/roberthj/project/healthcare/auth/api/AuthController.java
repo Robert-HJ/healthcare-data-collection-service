@@ -6,7 +6,7 @@ import com.roberthj.project.healthcare.auth.response.MeResponse;
 import com.roberthj.project.healthcare.auth.response.SignInResponse;
 import com.roberthj.project.healthcare.auth.response.SignUpResponse;
 import com.roberthj.project.healthcare.auth.component.AccessTokenIssuer;
-import com.roberthj.project.healthcare.auth.service.AuthService;
+import com.roberthj.project.healthcare.auth.application.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

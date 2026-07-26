@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.auth.service;
+package com.roberthj.project.healthcare.auth.application;
 
 import com.roberthj.project.healthcare.auth.exception.AuthErrorCode;
 import com.roberthj.project.healthcare.auth.exception.AuthException;
