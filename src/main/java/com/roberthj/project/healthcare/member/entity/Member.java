@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.member.domain.entity;
+package com.roberthj.project.healthcare.member.entity;
 
 import com.roberthj.project.healthcare.framework.entity.BaseEntity;
 import jakarta.persistence.Column;

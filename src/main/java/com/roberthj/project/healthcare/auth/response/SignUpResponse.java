@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.auth.response;
 
-import com.roberthj.project.healthcare.member.domain.entity.Member;
+import com.roberthj.project.healthcare.member.entity.Member;
 
 import java.time.Instant;
 

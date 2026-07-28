@@ -1,6 +1,6 @@
-package com.roberthj.project.healthcare.member.domain.repository;
+package com.roberthj.project.healthcare.member.repository;
 
-import com.roberthj.project.healthcare.member.domain.entity.Member;
+import com.roberthj.project.healthcare.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

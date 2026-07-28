@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.framework.security;
 
-import com.roberthj.project.healthcare.member.domain.repository.MemberRepository;
+import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

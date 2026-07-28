@@ -1,7 +1,7 @@
 package com.roberthj.project.healthcare.auth.api;
 
-import com.roberthj.project.healthcare.member.domain.entity.Member;
-import com.roberthj.project.healthcare.member.domain.repository.MemberRepository;
+import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

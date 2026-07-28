@@ -1,7 +1,7 @@
-package com.roberthj.project.healthcare.member.domain.repository;
+package com.roberthj.project.healthcare.member.repository;
 
 import com.roberthj.project.healthcare.framework.config.JpaConfig;
-import com.roberthj.project.healthcare.member.domain.entity.Member;
+import com.roberthj.project.healthcare.member.entity.Member;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
