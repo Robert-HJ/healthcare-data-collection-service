@@ -1,20 +1,19 @@
-package com.roberthj.project.healthcare.collection.exception;
+package com.roberthj.project.healthcare.member.exception;
 
 import com.roberthj.project.healthcare.framework.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-public enum CollectionErrorCode implements ErrorCode {
+public enum MemberErrorCode implements ErrorCode {
 
-    INVALID_PAYLOAD(HttpStatus.BAD_REQUEST, "COLLECTION001", "수집 요청 형식이 올바르지 않습니다."),
-    RECORD_KEY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "COLLECTION002", "접근할 수 없는 건강 데이터입니다."),
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER001", "존재하지 않는 회원입니다."),
     ;
 
     private final HttpStatusCode httpStatusCode;
     private final String errorCode;
     private final String errorMessage;
 
-    CollectionErrorCode(HttpStatusCode httpStatusCode, String errorCode, String errorMessage) {
+    MemberErrorCode(HttpStatusCode httpStatusCode, String errorCode, String errorMessage) {
         this.httpStatusCode = httpStatusCode;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
