@@ -1,9 +1,9 @@
 package com.roberthj.project.healthcare.collection.api;
 
 import com.roberthj.project.healthcare.auth.component.AccessTokenIssuer;
-import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequest;
+import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
 import com.roberthj.project.healthcare.collection.repository.HealthDataCollectionRequestRepository;
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ class HealthDataCollectionControllerTest {
 
     @Test
     void acceptValidatedPayloadAndSavePendingRequest() throws Exception {
-        Member member = saveMember();
+        MemberEntity member = saveMember();
         String accessToken = accessTokenIssuer
             .issue(member.getId(), member.getRecordKey())
             .value();
@@ -76,7 +76,7 @@ class HealthDataCollectionControllerTest {
         Long requestId = objectMapper.readTree(responseBody)
             .get("requestId")
             .longValue();
-        HealthDataCollectionRequest savedRequest = collectionRequestRepository
+        HealthDataCollectionRequestEntity savedRequest = collectionRequestRepository
             .findById(requestId)
             .orElseThrow();
 
@@ -90,7 +90,7 @@ class HealthDataCollectionControllerTest {
     @Test
     void rejectPayloadWithDifferentRecordKey() throws Exception {
         long requestCount = collectionRequestRepository.count();
-        Member member = saveMember();
+        MemberEntity member = saveMember();
         String accessToken = accessTokenIssuer
             .issue(member.getId(), member.getRecordKey())
             .value();
@@ -107,10 +107,10 @@ class HealthDataCollectionControllerTest {
         assertThat(collectionRequestRepository.count()).isEqualTo(requestCount);
     }
 
-    private Member saveMember() {
+    private MemberEntity saveMember() {
         String recordKey = UUID.randomUUID().toString();
         return memberRepository.save(
-            Member.create(
+            MemberEntity.create(
                 "홍길동",
                 "길동",
                 "member-" + recordKey + "@example.com",

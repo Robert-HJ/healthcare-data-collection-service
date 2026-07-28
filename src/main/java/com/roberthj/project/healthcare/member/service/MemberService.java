@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.member.service;
 
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.exception.MemberException;
 import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public Member getMember(Long memberId) {
+    public MemberEntity getMember(Long memberId) {
         return memberRepository.findById(memberId)
             .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
     }

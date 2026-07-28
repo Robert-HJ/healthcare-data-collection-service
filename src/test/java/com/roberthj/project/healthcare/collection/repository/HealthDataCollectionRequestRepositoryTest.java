@@ -1,10 +1,10 @@
 package com.roberthj.project.healthcare.collection.repository;
 
-import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequest;
+import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
 import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
 import com.roberthj.project.healthcare.collection.enums.HealthDataType;
 import com.roberthj.project.healthcare.framework.config.JpaConfig;
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
@@ -38,8 +38,8 @@ class HealthDataCollectionRequestRepositoryTest {
     @Test
     void saveAndLoadJsonPayload() {
         String recordKey = UUID.randomUUID().toString();
-        Member member = memberRepository.save(
-            Member.create(
+        MemberEntity member = memberRepository.save(
+            MemberEntity.create(
                 "홍길동",
                 "길동",
                 "member-" + recordKey + "@example.com",
@@ -48,18 +48,18 @@ class HealthDataCollectionRequestRepositoryTest {
             )
         );
         ObjectNode payload = createPayload(recordKey);
-        HealthDataCollectionRequest request = HealthDataCollectionRequest.create(
+        HealthDataCollectionRequestEntity request = HealthDataCollectionRequestEntity.create(
             member,
             HealthDataType.STEPS,
             HealthDataSource.SAMSUNG_HEALTH,
             payload
         );
 
-        HealthDataCollectionRequest savedRequest = collectionRequestRepository.saveAndFlush(request);
+        HealthDataCollectionRequestEntity savedRequest = collectionRequestRepository.saveAndFlush(request);
         Long requestId = savedRequest.getId();
         entityManager.clear();
 
-        HealthDataCollectionRequest loadedRequest = collectionRequestRepository.findById(requestId)
+        HealthDataCollectionRequestEntity loadedRequest = collectionRequestRepository.findById(requestId)
             .orElseThrow();
 
         assertThat(loadedRequest.getPayload()).isEqualTo(payload);

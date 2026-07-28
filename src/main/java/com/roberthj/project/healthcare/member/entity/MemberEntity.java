@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
     }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntity {
+public class MemberEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +43,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false, updatable = false, length = 36)
     private String recordKey;
 
-    private Member(String name, String nickname, String email, String password, String recordKey) {
+    private MemberEntity(String name, String nickname, String email, String password, String recordKey) {
         this.name = name;
         this.nickname = nickname;
         this.email = email;
@@ -51,7 +51,7 @@ public class Member extends BaseEntity {
         this.recordKey = recordKey;
     }
 
-    public static Member create(String name, String nickname, String email, String password, String recordKey) {
-        return new Member(name, nickname, email, password, recordKey);
+    public static MemberEntity create(String name, String nickname, String email, String password, String recordKey) {
+        return new MemberEntity(name, nickname, email, password, recordKey);
     }
 }

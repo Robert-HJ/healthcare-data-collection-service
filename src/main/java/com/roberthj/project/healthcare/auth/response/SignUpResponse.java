@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.auth.response;
 
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 
 import java.time.Instant;
 
@@ -13,7 +13,7 @@ public record SignUpResponse(
         Instant createdAt
 ) {
 
-    public static SignUpResponse from(Member member) {
+    public static SignUpResponse from(MemberEntity member) {
         return new SignUpResponse(
                 member.getId(),
                 member.getName(),

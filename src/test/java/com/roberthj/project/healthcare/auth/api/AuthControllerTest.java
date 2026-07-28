@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.auth.api;
 
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.email").value(email))
                 .andExpect(jsonPath("$.recordKey").isNotEmpty());
 
-        Member savedMember = memberRepository.findByEmail(email).orElseThrow();
+        MemberEntity savedMember = memberRepository.findByEmail(email).orElseThrow();
         assertThat(savedMember.getPassword()).isNotEqualTo(password);
         assertThat(passwordEncoder.matches(password, savedMember.getPassword())).isTrue();
     }

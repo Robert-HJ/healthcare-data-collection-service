@@ -4,7 +4,7 @@ import com.roberthj.project.healthcare.collection.enums.CollectionRequestStatus;
 import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
 import com.roberthj.project.healthcare.collection.enums.HealthDataType;
 import com.roberthj.project.healthcare.framework.entity.BaseEntity;
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -40,7 +40,7 @@ import tools.jackson.databind.JsonNode;
     }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HealthDataCollectionRequest extends BaseEntity {
+public class HealthDataCollectionRequestEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +52,7 @@ public class HealthDataCollectionRequest extends BaseEntity {
         nullable = false,
         updatable = false
     )
-    private Member member;
+    private MemberEntity member;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false, length = 30)
@@ -76,8 +76,8 @@ public class HealthDataCollectionRequest extends BaseEntity {
     @Column(length = 1000)
     private String errorMessage;
 
-    private HealthDataCollectionRequest(
-        Member member,
+    private HealthDataCollectionRequestEntity(
+        MemberEntity member,
         HealthDataType dataType,
         HealthDataSource source,
         JsonNode payload
@@ -90,12 +90,12 @@ public class HealthDataCollectionRequest extends BaseEntity {
         this.retryCount = 0;
     }
 
-    public static HealthDataCollectionRequest create(
-        Member member,
+    public static HealthDataCollectionRequestEntity create(
+        MemberEntity member,
         HealthDataType dataType,
         HealthDataSource source,
         JsonNode payload
     ) {
-        return new HealthDataCollectionRequest(member, dataType, source, payload);
+        return new HealthDataCollectionRequestEntity(member, dataType, source, payload);
     }
 }

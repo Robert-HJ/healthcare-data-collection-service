@@ -9,7 +9,7 @@ import com.roberthj.project.healthcare.auth.response.SignUpResponse;
 import com.roberthj.project.healthcare.auth.component.AccessTokenIssuer;
 import com.roberthj.project.healthcare.framework.security.CustomUserDetails;
 import com.roberthj.project.healthcare.member.repository.MemberRepository;
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -49,7 +49,7 @@ public class AuthService {
         }
 
         // 2. 가입 대상 객체 생성
-        Member member = Member.create(
+        MemberEntity entity = MemberEntity.create(
                 request.name(),
                 request.nickname(),
                 request.email(),
@@ -59,7 +59,7 @@ public class AuthService {
 
         // 3. 회원 가입 - 동시 호출로 500 에러 발생시 응답 일관성을 위한 Catch
         try {
-            return SignUpResponse.from(memberRepository.save(member));
+            return SignUpResponse.from(memberRepository.save(entity));
         } catch (DataIntegrityViolationException exception) {
             if (exception.getCause() instanceof ConstraintViolationException constraintViolationException) {
                 String constraintName = constraintViolationException.getConstraintName();

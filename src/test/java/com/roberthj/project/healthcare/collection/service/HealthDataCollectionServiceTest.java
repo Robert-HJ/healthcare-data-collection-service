@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.collection.service;
 
-import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequest;
+import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
 import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
 import com.roberthj.project.healthcare.collection.enums.HealthDataType;
 import com.roberthj.project.healthcare.collection.exception.CollectionException;
@@ -8,7 +8,7 @@ import com.roberthj.project.healthcare.collection.repository.HealthDataCollectio
 import com.roberthj.project.healthcare.collection.response.HealthDataCollectionResponse;
 import com.roberthj.project.healthcare.collection.validator.CollectionPayloadMetadata;
 import com.roberthj.project.healthcare.collection.validator.CollectionPayloadValidator;
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,18 +54,18 @@ class HealthDataCollectionServiceTest {
             HealthDataType.STEPS,
             HealthDataSource.SAMSUNG_HEALTH
         );
-        Member member = Member.create(
+        MemberEntity member = MemberEntity.create(
             "홍길동",
             "길동",
             "member@example.com",
             "encoded-password",
             recordKey
         );
-        HealthDataCollectionRequest savedRequest = mock(HealthDataCollectionRequest.class);
+        HealthDataCollectionRequestEntity savedRequest = mock(HealthDataCollectionRequestEntity.class);
 
         when(payloadValidator.validateMetadata(payload)).thenReturn(metadata);
         when(memberService.getMember(memberId)).thenReturn(member);
-        when(collectionRequestRepository.save(any(HealthDataCollectionRequest.class)))
+        when(collectionRequestRepository.save(any(HealthDataCollectionRequestEntity.class)))
             .thenReturn(savedRequest);
         when(savedRequest.getId()).thenReturn(10L);
         when(savedRequest.getStatus()).thenReturn(PENDING);
@@ -76,12 +76,12 @@ class HealthDataCollectionServiceTest {
             payload
         );
 
-        ArgumentCaptor<HealthDataCollectionRequest> requestCaptor =
-            ArgumentCaptor.forClass(HealthDataCollectionRequest.class);
+        ArgumentCaptor<HealthDataCollectionRequestEntity> requestCaptor =
+            ArgumentCaptor.forClass(HealthDataCollectionRequestEntity.class);
         verify(payloadValidator).validateEntries(metadata.source(), payload);
         verify(collectionRequestRepository).save(requestCaptor.capture());
 
-        HealthDataCollectionRequest request = requestCaptor.getValue();
+        HealthDataCollectionRequestEntity request = requestCaptor.getValue();
         assertThat(request.getMember()).isSameAs(member);
         assertThat(request.getDataType()).isEqualTo(metadata.dataType());
         assertThat(request.getSource()).isEqualTo(metadata.source());

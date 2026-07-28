@@ -1,7 +1,7 @@
 package com.roberthj.project.healthcare.member.repository;
 
 import com.roberthj.project.healthcare.framework.config.JpaConfig;
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -25,7 +25,7 @@ class MemberRepositoryTest {
     @Test
     void saveMember() {
         String recordKey = UUID.randomUUID().toString();
-        Member member = Member.create(
+        MemberEntity member = MemberEntity.create(
             "홍길동",
             "길동",
             "member-" + recordKey + "@example.com",
@@ -33,7 +33,7 @@ class MemberRepositoryTest {
             recordKey
         );
 
-        Member savedMember = memberRepository.saveAndFlush(member);
+        MemberEntity savedMember = memberRepository.saveAndFlush(member);
 
         assertThat(savedMember.getId()).isNotNull();
         assertThat(savedMember.getRecordKey()).isEqualTo(recordKey);

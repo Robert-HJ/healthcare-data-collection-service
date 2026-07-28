@@ -9,7 +9,7 @@ import com.roberthj.project.healthcare.auth.response.SignInResponse;
 import com.roberthj.project.healthcare.auth.response.SignUpResponse;
 import com.roberthj.project.healthcare.framework.security.CustomUserDetails;
 import com.roberthj.project.healthcare.framework.security.CustomUserDetailsService;
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
@@ -64,14 +64,14 @@ class AuthServiceTest {
 
         when(memberRepository.existsByEmail(request.email())).thenReturn(false);
         when(passwordEncoder.encode(request.password())).thenReturn("encoded-password");
-        when(memberRepository.save(any(Member.class)))
+        when(memberRepository.save(any(MemberEntity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         SignUpResponse response = authService.signUp(request);
 
-        ArgumentCaptor<Member> memberCaptor = ArgumentCaptor.forClass(Member.class);
+        ArgumentCaptor<MemberEntity> memberCaptor = ArgumentCaptor.forClass(MemberEntity.class);
         verify(memberRepository).save(memberCaptor.capture());
-        Member savedMember = memberCaptor.getValue();
+        MemberEntity savedMember = memberCaptor.getValue();
 
         assertThat(savedMember.getName()).isEqualTo(request.name());
         assertThat(savedMember.getNickname()).isEqualTo(request.nickname());
@@ -93,7 +93,7 @@ class AuthServiceTest {
                                 .isEqualTo(AuthErrorCode.EMAIL_ALREADY_EXISTS));
 
         verify(passwordEncoder, never()).encode(any());
-        verify(memberRepository, never()).save(any(Member.class));
+        verify(memberRepository, never()).save(any(MemberEntity.class));
     }
 
     @Test
@@ -103,7 +103,7 @@ class AuthServiceTest {
 
         when(memberRepository.existsByEmail(request.email())).thenReturn(false);
         when(passwordEncoder.encode(request.password())).thenReturn("encoded-password");
-        when(memberRepository.save(any(Member.class))).thenThrow(exception);
+        when(memberRepository.save(any(MemberEntity.class))).thenThrow(exception);
 
         assertThatThrownBy(() -> authService.signUp(request))
                 .isInstanceOfSatisfying(AuthException.class, authException -> {
@@ -120,7 +120,7 @@ class AuthServiceTest {
 
         when(memberRepository.existsByEmail(request.email())).thenReturn(false);
         when(passwordEncoder.encode(request.password())).thenReturn("encoded-password");
-        when(memberRepository.save(any(Member.class))).thenThrow(exception);
+        when(memberRepository.save(any(MemberEntity.class))).thenThrow(exception);
 
         assertThatThrownBy(() -> authService.signUp(request))
                 .isSameAs(exception);

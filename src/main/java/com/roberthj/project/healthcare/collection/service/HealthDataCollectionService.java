@@ -1,12 +1,12 @@
 package com.roberthj.project.healthcare.collection.service;
 
-import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequest;
+import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
 import com.roberthj.project.healthcare.collection.exception.CollectionException;
 import com.roberthj.project.healthcare.collection.repository.HealthDataCollectionRequestRepository;
 import com.roberthj.project.healthcare.collection.response.HealthDataCollectionResponse;
 import com.roberthj.project.healthcare.collection.validator.CollectionPayloadMetadata;
 import com.roberthj.project.healthcare.collection.validator.CollectionPayloadValidator;
-import com.roberthj.project.healthcare.member.entity.Member;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,13 +33,13 @@ public class HealthDataCollectionService {
         checkRecordKey(userRecordKey, metadata.recordKey());
 
         // 3. 정상 사용자 조회
-        Member member = memberService.getMember(memberId);
+        MemberEntity member = memberService.getMember(memberId);
 
         // 4. 내부 데이터 검증
         payloadValidator.validateEntries(metadata.source(), payload);
 
         // 5. 원본 데이터 저장
-        HealthDataCollectionRequest request = HealthDataCollectionRequest.create(
+        HealthDataCollectionRequestEntity entity = HealthDataCollectionRequestEntity.create(
             member,
             metadata.dataType(),
             metadata.source(),
@@ -47,7 +47,7 @@ public class HealthDataCollectionService {
         );
 
         return HealthDataCollectionResponse.from(
-            collectionRequestRepository.save(request)
+            collectionRequestRepository.save(entity)
         );
     }
 
