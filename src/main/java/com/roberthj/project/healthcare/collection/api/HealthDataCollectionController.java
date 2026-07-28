@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.JsonNode;
 
+import static com.roberthj.project.healthcare.framework.response.ResponseEntityFactory.accepted;
+
 @Tag(name = "Health Data Collection")
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +37,6 @@ public class HealthDataCollectionController {
             payload
         );
 
-        return ResponseEntity.accepted().body(response);
+        return accepted(response);
     }
 }

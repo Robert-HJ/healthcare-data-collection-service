@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -20,6 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.roberthj.project.healthcare.framework.response.ResponseEntityFactory.created;
+import static com.roberthj.project.healthcare.framework.response.ResponseEntityFactory.ok;
 
 @Tag(name = "Authentication")
 @RestController
@@ -32,21 +34,19 @@ public class AuthController {
     @Operation(summary = "회원가입")
     @PostMapping("/sign-up")
     public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(authService.signUp(request));
+        return created(authService.signUp(request));
     }
 
     @Operation(summary = "로그인")
     @PostMapping("/sign-in")
     public ResponseEntity<SignInResponse> signIn(@Valid @RequestBody SignInRequest request) {
-        return ResponseEntity.ok(authService.signIn(request));
+        return ok(authService.signIn(request));
     }
 
     @Operation(summary = "내 인증 정보 조회")
     @GetMapping("/me")
     public ResponseEntity<MeResponse> me(@AuthenticationPrincipal Jwt jwt) {
-        return ResponseEntity.ok(new MeResponse(
+        return ok(new MeResponse(
                 Long.valueOf(jwt.getSubject()),
                 jwt.getClaimAsString(AccessTokenIssuer.RECORD_KEY_CLAIM)
         ));
