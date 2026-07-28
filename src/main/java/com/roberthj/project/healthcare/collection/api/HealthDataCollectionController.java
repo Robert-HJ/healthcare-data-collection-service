@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.collection.api;
 
-import com.roberthj.project.healthcare.auth.component.AccessTokenIssuer;
+import com.roberthj.project.healthcare.auth.security.AccessTokenIssuer;
 import com.roberthj.project.healthcare.collection.response.HealthDataCollectionResponse;
 import com.roberthj.project.healthcare.collection.service.HealthDataCollectionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.JsonNode;
 
-import static com.roberthj.project.healthcare.framework.response.ResponseEntityFactory.accepted;
+import static com.roberthj.project.healthcare.common.response.ResponseEntityFactory.accepted;
 
 @Tag(name = "Health Data Collection")
 @RestController

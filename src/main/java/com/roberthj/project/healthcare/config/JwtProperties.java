@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.framework.properties;
+package com.roberthj.project.healthcare.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

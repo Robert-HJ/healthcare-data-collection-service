@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.framework.config;
+package com.roberthj.project.healthcare.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

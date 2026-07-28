@@ -3,7 +3,7 @@ package com.roberthj.project.healthcare.collection.repository;
 import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
 import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
 import com.roberthj.project.healthcare.collection.enums.HealthDataType;
-import com.roberthj.project.healthcare.framework.config.JpaConfig;
+import com.roberthj.project.healthcare.config.JpaConfig;
 import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import jakarta.persistence.EntityManager;

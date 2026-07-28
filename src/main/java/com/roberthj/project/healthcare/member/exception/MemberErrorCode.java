@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.member.exception;
 
-import com.roberthj.project.healthcare.framework.exception.ErrorCode;
+import com.roberthj.project.healthcare.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 

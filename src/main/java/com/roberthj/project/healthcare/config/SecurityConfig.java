@@ -1,7 +1,7 @@
-package com.roberthj.project.healthcare.framework.config;
+package com.roberthj.project.healthcare.config;
 
-import com.roberthj.project.healthcare.framework.security.RestAccessDeniedHandler;
-import com.roberthj.project.healthcare.framework.security.RestAuthenticationEntryPoint;
+import com.roberthj.project.healthcare.auth.security.RestAccessDeniedHandler;
+import com.roberthj.project.healthcare.auth.security.RestAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

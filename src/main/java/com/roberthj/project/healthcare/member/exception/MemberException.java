@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.member.exception;
 
-import com.roberthj.project.healthcare.framework.exception.BaseException;
+import com.roberthj.project.healthcare.common.exception.BaseException;
 
 public class MemberException extends BaseException {
 

@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.collection.exception;
 
-import com.roberthj.project.healthcare.framework.exception.BaseException;
+import com.roberthj.project.healthcare.common.exception.BaseException;
 
 public class CollectionException extends BaseException {
 

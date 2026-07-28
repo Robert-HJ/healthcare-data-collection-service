@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.framework.api;
+package com.roberthj.project.healthcare.system.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 
-import static com.roberthj.project.healthcare.framework.response.ResponseEntityFactory.ok;
+import static com.roberthj.project.healthcare.common.response.ResponseEntityFactory.ok;
 
 @Tag(name = "Health Check")
 @RestController

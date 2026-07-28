@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.framework.exception;
+package com.roberthj.project.healthcare.common.exception;
 
 import org.springframework.http.HttpStatusCode;
 

@@ -5,7 +5,7 @@ import com.roberthj.project.healthcare.auth.request.SignUpRequest;
 import com.roberthj.project.healthcare.auth.response.MeResponse;
 import com.roberthj.project.healthcare.auth.response.SignInResponse;
 import com.roberthj.project.healthcare.auth.response.SignUpResponse;
-import com.roberthj.project.healthcare.auth.component.AccessTokenIssuer;
+import com.roberthj.project.healthcare.auth.security.AccessTokenIssuer;
 import com.roberthj.project.healthcare.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.roberthj.project.healthcare.framework.response.ResponseEntityFactory.created;
-import static com.roberthj.project.healthcare.framework.response.ResponseEntityFactory.ok;
+import static com.roberthj.project.healthcare.common.response.ResponseEntityFactory.created;
+import static com.roberthj.project.healthcare.common.response.ResponseEntityFactory.ok;
 
 @Tag(name = "Authentication")
 @RestController

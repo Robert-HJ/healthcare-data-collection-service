@@ -1,7 +1,7 @@
-package com.roberthj.project.healthcare.auth.component;
+package com.roberthj.project.healthcare.auth.security;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import com.roberthj.project.healthcare.framework.properties.JwtProperties;
+import com.roberthj.project.healthcare.config.JwtProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;

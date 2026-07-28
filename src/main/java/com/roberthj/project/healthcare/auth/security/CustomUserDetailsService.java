@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.framework.security;
+package com.roberthj.project.healthcare.auth.security;
 
 import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

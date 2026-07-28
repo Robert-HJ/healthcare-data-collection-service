@@ -1,6 +1,6 @@
-package com.roberthj.project.healthcare.auth.component;
+package com.roberthj.project.healthcare.auth.security;
 
-import com.roberthj.project.healthcare.framework.properties.JwtProperties;
+import com.roberthj.project.healthcare.config.JwtProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;

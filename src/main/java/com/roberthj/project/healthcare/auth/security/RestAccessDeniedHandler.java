@@ -1,7 +1,7 @@
-package com.roberthj.project.healthcare.framework.security;
+package com.roberthj.project.healthcare.auth.security;
 
 import com.roberthj.project.healthcare.auth.exception.AuthErrorCode;
-import com.roberthj.project.healthcare.framework.exception.ErrorResponse;
+import com.roberthj.project.healthcare.common.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,6 @@
-package com.roberthj.project.healthcare.framework.config;
+package com.roberthj.project.healthcare.config;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import com.roberthj.project.healthcare.framework.properties.JwtProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.member.entity;
 
-import com.roberthj.project.healthcare.framework.entity.BaseEntity;
+import com.roberthj.project.healthcare.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

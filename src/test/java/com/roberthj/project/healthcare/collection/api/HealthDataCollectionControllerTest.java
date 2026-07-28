@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.collection.api;
 
-import com.roberthj.project.healthcare.auth.component.AccessTokenIssuer;
+import com.roberthj.project.healthcare.auth.security.AccessTokenIssuer;
 import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
 import com.roberthj.project.healthcare.collection.repository.HealthDataCollectionRequestRepository;
 import com.roberthj.project.healthcare.member.entity.MemberEntity;

@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.framework.response;
+package com.roberthj.project.healthcare.common.response;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

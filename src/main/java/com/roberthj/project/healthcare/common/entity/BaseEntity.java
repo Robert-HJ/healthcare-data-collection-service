@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.framework.entity;
+package com.roberthj.project.healthcare.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

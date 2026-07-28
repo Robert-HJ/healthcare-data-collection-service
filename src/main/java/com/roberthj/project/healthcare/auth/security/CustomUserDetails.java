@@ -1,4 +1,4 @@
-package com.roberthj.project.healthcare.framework.security;
+package com.roberthj.project.healthcare.auth.security;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

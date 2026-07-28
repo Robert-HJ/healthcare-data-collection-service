@@ -1,6 +1,6 @@
 package com.roberthj.project.healthcare.auth.response;
 
-import com.roberthj.project.healthcare.auth.component.AccessTokenIssuer;
+import com.roberthj.project.healthcare.auth.security.AccessTokenIssuer;
 
 public record SignInResponse(
         String tokenType,

@@ -1,14 +1,14 @@
 package com.roberthj.project.healthcare.auth.service;
 
-import com.roberthj.project.healthcare.auth.component.AccessTokenIssuer;
+import com.roberthj.project.healthcare.auth.security.AccessTokenIssuer;
 import com.roberthj.project.healthcare.auth.exception.AuthErrorCode;
 import com.roberthj.project.healthcare.auth.exception.AuthException;
 import com.roberthj.project.healthcare.auth.request.SignInRequest;
 import com.roberthj.project.healthcare.auth.request.SignUpRequest;
 import com.roberthj.project.healthcare.auth.response.SignInResponse;
 import com.roberthj.project.healthcare.auth.response.SignUpResponse;
-import com.roberthj.project.healthcare.framework.security.CustomUserDetails;
-import com.roberthj.project.healthcare.framework.security.CustomUserDetailsService;
+import com.roberthj.project.healthcare.auth.security.CustomUserDetails;
+import com.roberthj.project.healthcare.auth.security.CustomUserDetailsService;
 import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.repository.MemberRepository;
 import org.hibernate.exception.ConstraintViolationException;
