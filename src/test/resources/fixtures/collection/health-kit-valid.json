@@ -1,0 +1,49 @@
+{
+  "recordkey": "test-record-key",
+  "type": "steps",
+  "lastUpdate": "2024-11-15 01:00:00 +0000",
+  "data": {
+    "source": {
+      "mode": 10,
+      "product": {
+        "name": "iPhone",
+        "vender": "Apple inc."
+      },
+      "name": "Health Kit",
+      "type": ""
+    },
+    "memo": "",
+    "entries": [
+      {
+        "period": {
+          "from": "2024-11-14T21:20:00+0000",
+          "to": "2024-11-14T21:30:00+0000"
+        },
+        "distance": {
+          "unit": "km",
+          "value": 0.0192
+        },
+        "calories": {
+          "unit": "kcal",
+          "value": 0
+        },
+        "steps": "24"
+      },
+      {
+        "period": {
+          "from": "2024-11-14T23:00:00+0000",
+          "to": "2024-11-14T23:10:00+0000"
+        },
+        "distance": {
+          "unit": "km",
+          "value": 0.2301381129210892
+        },
+        "calories": {
+          "unit": "kcal",
+          "value": 0
+        },
+        "steps": "287.6726411513615"
+      }
+    ]
+  }
+}

@@ -5,7 +5,8 @@ import com.roberthj.project.healthcare.collection.exception.CollectionException;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
@@ -16,21 +17,21 @@ import static com.roberthj.project.healthcare.collection.validator.ValidationUti
 import static com.roberthj.project.healthcare.collection.validator.ValidationUtils.requireText;
 
 @Component
-public class SamsungHealthValidator implements SourceValidator {
+public class HealthKitValidator implements SourceValidator {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
-        DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+        DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssxx")
             .withResolverStyle(ResolverStyle.STRICT);
 
     @Override
     public HealthDataSource source() {
-        return HealthDataSource.SAMSUNG_HEALTH;
+        return HealthDataSource.HEALTH_KIT;
     }
 
     @Override
     public void validate(JsonNode payload) {
         JsonNode entries = payload.path("data").path("entries");
-        if (!entries.isArray() || entries.isEmpty()) {
+        if (!entries.isArray() || entries.size() == 0) {
             throw invalid("data.entries는 비어 있지 않은 배열이어야 합니다.");
         }
 
@@ -46,11 +47,11 @@ public class SamsungHealthValidator implements SourceValidator {
         }
 
         JsonNode period = requireObject(entry, "period", entryPath + ".period");
-        LocalDateTime from = parseDateTime(
+        OffsetDateTime from = parseDateTime(
             requireText(period, "from", entryPath + ".period.from"),
             entryPath + ".period.from"
         );
-        LocalDateTime to = parseDateTime(
+        OffsetDateTime to = parseDateTime(
             requireText(period, "to", entryPath + ".period.to"),
             entryPath + ".period.to"
         );
@@ -83,15 +84,22 @@ public class SamsungHealthValidator implements SourceValidator {
     }
 
     private void validateSteps(JsonNode entry, String entryPath) {
-        JsonNode steps = entry.get("steps");
-        if (steps == null || !steps.isIntegralNumber()) {
-            throw invalid(entryPath + ".steps는 정수여야 합니다.");
+        String fieldPath = entryPath + ".steps";
+        String steps = requireText(entry, "steps", fieldPath);
+        try {
+            new BigDecimal(steps);
+        } catch (NumberFormatException exception) {
+            throw new CollectionException(
+                INVALID_PAYLOAD,
+                fieldPath + "는 숫자로 변환할 수 있는 문자열이어야 합니다.",
+                exception
+            );
         }
     }
 
-    private LocalDateTime parseDateTime(String value, String fieldPath) {
+    private OffsetDateTime parseDateTime(String value, String fieldPath) {
         try {
-            return LocalDateTime.parse(value, DATE_TIME_FORMATTER);
+            return OffsetDateTime.parse(value, DATE_TIME_FORMATTER);
         } catch (DateTimeParseException exception) {
             throw new CollectionException(
                 INVALID_PAYLOAD,
