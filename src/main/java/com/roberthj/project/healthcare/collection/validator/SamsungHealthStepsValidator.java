@@ -1,7 +1,9 @@
 package com.roberthj.project.healthcare.collection.validator;
 
 import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
+import com.roberthj.project.healthcare.collection.enums.HealthDataType;
 import com.roberthj.project.healthcare.collection.exception.CollectionException;
+import com.roberthj.project.healthcare.collection.model.HealthDataFormat;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 
@@ -16,15 +18,18 @@ import static com.roberthj.project.healthcare.collection.validator.ValidationUti
 import static com.roberthj.project.healthcare.collection.validator.ValidationUtils.requireText;
 
 @Component
-public class SamsungHealthValidator implements SourceValidator {
+public class SamsungHealthStepsValidator implements HealthDataValidator {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
         DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
             .withResolverStyle(ResolverStyle.STRICT);
 
     @Override
-    public HealthDataSource source() {
-        return HealthDataSource.SAMSUNG_HEALTH;
+    public HealthDataFormat format() {
+        return new HealthDataFormat(
+            HealthDataSource.SAMSUNG_HEALTH,
+            HealthDataType.STEPS
+        );
     }
 
     @Override

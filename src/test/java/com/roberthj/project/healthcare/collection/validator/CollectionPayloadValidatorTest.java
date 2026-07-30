@@ -24,7 +24,7 @@ class CollectionPayloadValidatorTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final CollectionPayloadValidator validator = new CollectionPayloadValidator(
-        List.of(new SamsungHealthValidator(), new HealthKitValidator())
+        List.of(new SamsungHealthStepsValidator(), new HealthKitStepsValidator())
     );
 
     @Test
@@ -51,11 +51,11 @@ class CollectionPayloadValidatorTest {
     }
 
     @Test
-    void validateEntriesWithSourceValidator() throws JacksonException {
+    void validateEntriesWithMatchingValidator() throws JacksonException {
         ObjectNode payload = loadPayload();
         CollectionPayloadMetadata metadata = validator.validateMetadata(payload);
 
-        assertThatCode(() -> validator.validateEntries(metadata.source(), payload))
+        assertThatCode(() -> validator.validateEntries(metadata.format(), payload))
             .doesNotThrowAnyException();
     }
 

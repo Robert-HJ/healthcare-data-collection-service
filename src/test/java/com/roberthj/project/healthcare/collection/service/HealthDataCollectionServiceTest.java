@@ -78,7 +78,7 @@ class HealthDataCollectionServiceTest {
 
         ArgumentCaptor<HealthDataCollectionRequestEntity> requestCaptor =
             ArgumentCaptor.forClass(HealthDataCollectionRequestEntity.class);
-        verify(payloadValidator).validateEntries(metadata.source(), payload);
+        verify(payloadValidator).validateEntries(metadata.format(), payload);
         verify(collectionRequestRepository).save(requestCaptor.capture());
 
         HealthDataCollectionRequestEntity request = requestCaptor.getValue();

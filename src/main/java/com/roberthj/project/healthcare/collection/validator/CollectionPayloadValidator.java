@@ -2,6 +2,7 @@ package com.roberthj.project.healthcare.collection.validator;
 
 import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
 import com.roberthj.project.healthcare.collection.enums.HealthDataType;
+import com.roberthj.project.healthcare.collection.model.HealthDataFormat;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 
@@ -17,12 +18,12 @@ import static com.roberthj.project.healthcare.collection.validator.ValidationUti
 @Component
 public class CollectionPayloadValidator {
 
-    private final Map<HealthDataSource, SourceValidator> validators;
+    private final Map<HealthDataFormat, HealthDataValidator> validators;
 
-    public CollectionPayloadValidator(List<SourceValidator> sourceValidators) {
-        this.validators = sourceValidators.stream()
+    public CollectionPayloadValidator(List<HealthDataValidator> healthDataValidators) {
+        this.validators = healthDataValidators.stream()
             .collect(Collectors.toUnmodifiableMap(
-                SourceValidator::source,
+                HealthDataValidator::format,
                 Function.identity()
             ));
     }
@@ -46,10 +47,10 @@ public class CollectionPayloadValidator {
         return new CollectionPayloadMetadata(recordKey, dataType, source);
     }
 
-    public void validateEntries(HealthDataSource source, JsonNode payload) {
-        SourceValidator validator = validators.get(source);
+    public void validateEntries(HealthDataFormat format, JsonNode payload) {
+        HealthDataValidator validator = validators.get(format);
         if (validator == null) {
-            throw new IllegalStateException("등록된 Source 검증기가 없습니다: " + source);
+            throw invalid("지원하지 않는 source와 type 조합입니다.");
         }
 
         validator.validate(payload);

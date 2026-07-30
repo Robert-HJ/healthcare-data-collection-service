@@ -1,11 +1,11 @@
 package com.roberthj.project.healthcare.collection.validator;
 
-import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
+import com.roberthj.project.healthcare.collection.model.HealthDataFormat;
 import tools.jackson.databind.JsonNode;
 
-public interface SourceValidator {
+public interface HealthDataValidator {
 
-    HealthDataSource source();
+    HealthDataFormat format();
 
     void validate(JsonNode payload);
 }

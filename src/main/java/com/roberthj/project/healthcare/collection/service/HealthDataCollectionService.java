@@ -36,7 +36,7 @@ public class HealthDataCollectionService {
         MemberEntity member = memberService.getMember(memberId);
 
         // 4. 내부 데이터 검증
-        payloadValidator.validateEntries(metadata.source(), payload);
+        payloadValidator.validateEntries(metadata.format(), payload);
 
         // 5. 원본 데이터 저장
         HealthDataCollectionRequestEntity entity = HealthDataCollectionRequestEntity.create(

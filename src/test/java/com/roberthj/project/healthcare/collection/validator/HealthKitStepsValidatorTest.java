@@ -14,16 +14,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class SamsungHealthValidatorTest {
+class HealthKitStepsValidatorTest {
 
     private static final String FIXTURE_PATH =
-        "/fixtures/collection/samsung-health-valid.json";
+        "/fixtures/collection/health-kit-valid.json";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final SamsungHealthValidator validator = new SamsungHealthValidator();
+    private final HealthKitStepsValidator validator = new HealthKitStepsValidator();
 
     @Test
-    void acceptValidPayloadIncludingZeroDurationEntry() throws JacksonException {
+    void acceptValidPayloadIncludingDecimalSteps() throws JacksonException {
         ObjectNode payload = loadPayload();
 
         assertThatCode(() -> validator.validate(payload))
@@ -31,25 +31,25 @@ class SamsungHealthValidatorTest {
     }
 
     @Test
-    void rejectInvalidDateTime() throws JacksonException {
+    void rejectDateTimeWithoutOffset() throws JacksonException {
         ObjectNode payload = loadPayload();
-        periodOfFirstEntry(payload).put("from", "2024-02-30 10:00:00");
+        periodOfFirstEntry(payload).put("from", "2024-11-14T21:20:00");
 
         assertInvalidPayload(payload);
     }
 
     @Test
-    void rejectStringSteps() throws JacksonException {
+    void rejectNumericSteps() throws JacksonException {
         ObjectNode payload = loadPayload();
-        firstEntry(payload).put("steps", "120");
+        firstEntry(payload).put("steps", 24);
 
         assertInvalidPayload(payload);
     }
 
     @Test
-    void rejectUnsupportedUnit() throws JacksonException {
+    void rejectNonNumericSteps() throws JacksonException {
         ObjectNode payload = loadPayload();
-        ((ObjectNode) firstEntry(payload).get("distance")).put("unit", "m");
+        firstEntry(payload).put("steps", "not-a-number");
 
         assertInvalidPayload(payload);
     }
