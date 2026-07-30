@@ -34,13 +34,12 @@ CREATE TABLE IF NOT EXISTS health_data_collection_request
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS health_activity_data
+CREATE TABLE IF NOT EXISTS health_step_data
 (
     id                    BIGINT         NOT NULL AUTO_INCREMENT,
     member_id             BIGINT         NOT NULL,
     collection_request_id BIGINT         NOT NULL,
     source                VARCHAR(50)    NOT NULL,
-    data_type             VARCHAR(30)    NOT NULL,
     started_at            DATETIME(6)    NOT NULL,
     ended_at              DATETIME(6)    NOT NULL,
     steps                 DECIMAL(30, 20) NOT NULL,
@@ -48,30 +47,29 @@ CREATE TABLE IF NOT EXISTS health_activity_data
     calories              DECIMAL(30, 20) NOT NULL,
     created_at            DATETIME(6)    NOT NULL,
     updated_at            DATETIME(6)    NOT NULL,
-    CONSTRAINT pk_health_activity_data PRIMARY KEY (id),
-    CONSTRAINT uk_health_activity_data_identity
-        UNIQUE (member_id, source, data_type, started_at, ended_at),
-    INDEX idx_health_activity_data_collection_request_id (collection_request_id)
+    CONSTRAINT pk_health_step_data PRIMARY KEY (id),
+    CONSTRAINT uk_health_step_data_identity
+        UNIQUE (member_id, source, started_at, ended_at),
+    INDEX idx_health_step_data_collection_request_id (collection_request_id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS health_activity_daily_aggregation
+CREATE TABLE IF NOT EXISTS health_step_daily_aggregation
 (
     id             BIGINT         NOT NULL AUTO_INCREMENT,
     member_id      BIGINT         NOT NULL,
     timezone       VARCHAR(50)    NOT NULL,
     source         VARCHAR(50)    NOT NULL,
-    data_type      VARCHAR(30)    NOT NULL,
     aggregate_date DATE           NOT NULL,
     steps          DECIMAL(30, 20) NOT NULL,
     distance       DECIMAL(30, 20) NOT NULL,
     calories       DECIMAL(30, 20) NOT NULL,
     created_at     DATETIME(6)    NOT NULL,
     updated_at     DATETIME(6)    NOT NULL,
-    CONSTRAINT pk_health_activity_daily_aggregation PRIMARY KEY (id),
-    CONSTRAINT uk_health_activity_daily_aggregation
-        UNIQUE (member_id, timezone, source, data_type, aggregate_date)
+    CONSTRAINT pk_health_step_daily_aggregation PRIMARY KEY (id),
+    CONSTRAINT uk_health_step_daily_aggregation
+        UNIQUE (member_id, timezone, source, aggregate_date)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
