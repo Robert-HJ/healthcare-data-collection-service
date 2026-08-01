@@ -32,7 +32,7 @@ class HealthDataCollectionRequestStateServiceTest {
 
     @BeforeEach
     void setUp() {
-        HealthDataCollectionWorkerProperties properties = new HealthDataCollectionWorkerProperties(4, 5, Duration.ofMinutes(5));
+        HealthDataCollectionWorkerProperties properties = new HealthDataCollectionWorkerProperties(4, 5, Duration.ofMinutes(5), Duration.ofMinutes(1));
         requestStateService = new HealthDataCollectionRequestStateService(collectionRequestRepository, claimRepository, properties);
     }
 

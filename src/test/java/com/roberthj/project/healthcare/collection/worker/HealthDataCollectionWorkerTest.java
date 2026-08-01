@@ -30,7 +30,7 @@ class HealthDataCollectionWorkerTest {
 
     @BeforeEach
     void setUp() {
-        HealthDataCollectionWorkerProperties properties = new HealthDataCollectionWorkerProperties(1, 5, Duration.ofMinutes(5));
+        HealthDataCollectionWorkerProperties properties = new HealthDataCollectionWorkerProperties(1, 5, Duration.ofMinutes(5), Duration.ofMinutes(1));
         worker = new HealthDataCollectionWorker(requestStateService, processingService, new SyncTaskExecutor(), properties);
     }
 

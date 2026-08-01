@@ -1,6 +1,7 @@
 package com.roberthj.project.healthcare.collection.service;
 
 import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
+import com.roberthj.project.healthcare.collection.event.HealthDataCollectionRequestSavedEvent;
 import com.roberthj.project.healthcare.collection.exception.CollectionException;
 import com.roberthj.project.healthcare.collection.repository.HealthDataCollectionRequestRepository;
 import com.roberthj.project.healthcare.collection.response.HealthDataCollectionResponse;
@@ -9,6 +10,7 @@ import com.roberthj.project.healthcare.collection.validator.CollectionPayloadVal
 import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import com.roberthj.project.healthcare.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.JsonNode;
@@ -22,6 +24,7 @@ public class HealthDataCollectionService {
     private final CollectionPayloadValidator payloadValidator;
     private final MemberService memberService;
     private final HealthDataCollectionRequestRepository collectionRequestRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public HealthDataCollectionResponse collect(Long memberId, String userRecordKey, JsonNode payload) {
@@ -46,9 +49,10 @@ public class HealthDataCollectionService {
             payload
         );
 
-        return HealthDataCollectionResponse.from(
-            collectionRequestRepository.save(entity)
-        );
+        HealthDataCollectionRequestEntity savedEntity = collectionRequestRepository.save(entity);
+        eventPublisher.publishEvent(new HealthDataCollectionRequestSavedEvent(savedEntity.getId()));
+
+        return HealthDataCollectionResponse.from(savedEntity);
     }
 
     private void checkRecordKey(String userRecordKey, String payloadRecordKey) {

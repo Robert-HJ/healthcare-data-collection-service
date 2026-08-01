@@ -16,6 +16,7 @@ healthcare:
       concurrency: 4
       max-retry-count: 5
       stale-processing-timeout: PT5M
+      polling-interval: PT1M
     steps:
       aggregation:
         time-zones:

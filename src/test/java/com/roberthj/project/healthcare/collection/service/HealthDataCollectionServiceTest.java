@@ -3,6 +3,7 @@ package com.roberthj.project.healthcare.collection.service;
 import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
 import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
 import com.roberthj.project.healthcare.collection.enums.HealthDataType;
+import com.roberthj.project.healthcare.collection.event.HealthDataCollectionRequestSavedEvent;
 import com.roberthj.project.healthcare.collection.exception.CollectionException;
 import com.roberthj.project.healthcare.collection.repository.HealthDataCollectionRequestRepository;
 import com.roberthj.project.healthcare.collection.response.HealthDataCollectionResponse;
@@ -16,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import tools.jackson.databind.JsonNode;
 
 import static com.roberthj.project.healthcare.collection.enums.CollectionRequestStatus.PENDING;
@@ -40,6 +42,9 @@ class HealthDataCollectionServiceTest {
 
     @Mock
     private HealthDataCollectionRequestRepository collectionRequestRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private HealthDataCollectionService collectionService;
@@ -80,6 +85,7 @@ class HealthDataCollectionServiceTest {
             ArgumentCaptor.forClass(HealthDataCollectionRequestEntity.class);
         verify(payloadValidator).validateEntries(metadata.format(), payload);
         verify(collectionRequestRepository).save(requestCaptor.capture());
+        verify(eventPublisher).publishEvent(new HealthDataCollectionRequestSavedEvent(10L));
 
         HealthDataCollectionRequestEntity request = requestCaptor.getValue();
         assertThat(request.getMember()).isSameAs(member);
