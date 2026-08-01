@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS health_data_collection_request
     updated_at    DATETIME(6)   NOT NULL,
     CONSTRAINT pk_health_data_collection_request PRIMARY KEY (id),
     INDEX idx_health_data_collection_request_status_updated_at (status, updated_at),
-    INDEX idx_health_data_collection_request_member_id (member_id)
+    INDEX idx_health_data_collection_request_group_order (member_id, source, data_type, id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;

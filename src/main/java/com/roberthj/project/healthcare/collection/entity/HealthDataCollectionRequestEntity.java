@@ -34,8 +34,8 @@ import tools.jackson.databind.JsonNode;
             columnList = "status, updated_at"
         ),
         @Index(
-            name = "idx_health_data_collection_request_member_id",
-            columnList = "member_id"
+            name = "idx_health_data_collection_request_group_order",
+            columnList = "member_id, source, data_type, id"
         )
     }
 )
@@ -101,5 +101,11 @@ public class HealthDataCollectionRequestEntity extends BaseEntity {
 
     public void complete() {
         this.status = CollectionRequestStatus.COMPLETED;
+    }
+
+    public void fail(String errorMessage) {
+        this.status = CollectionRequestStatus.FAILED;
+        this.retryCount++;
+        this.errorMessage = errorMessage;
     }
 }

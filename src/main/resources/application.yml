@@ -12,6 +12,10 @@ spring:
 
 healthcare:
   collection:
+    worker:
+      concurrency: 4
+      max-retry-count: 5
+      stale-processing-timeout: PT5M
     steps:
       aggregation:
         time-zones:
