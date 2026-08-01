@@ -8,4 +8,8 @@ public interface HealthDataProcessor {
     HealthDataFormat format();
 
     void process(HealthDataCollectionRequestEntity request);
+
+    default void reprocess(HealthDataCollectionRequestEntity request) {
+        process(request);
+    }
 }

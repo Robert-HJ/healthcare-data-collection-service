@@ -18,6 +18,7 @@ public enum CollectionErrorCode implements ErrorCode {
         "COLLECTION004",
         "건강 데이터 처리기가 중복 등록되었습니다."
     ),
+    COLLECTION_REQUEST_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "COLLECTION005", "건강 데이터 수집 요청을 찾을 수 없습니다."),
     ;
 
     private final HttpStatusCode httpStatusCode;

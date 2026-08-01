@@ -1,5 +1,6 @@
 package com.roberthj.project.healthcare.collection.processor;
 
+import com.roberthj.project.healthcare.collection.aggregation.HealthStepDailyAggregationService;
 import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
 import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
 import com.roberthj.project.healthcare.collection.enums.HealthDataType;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,6 +27,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +43,9 @@ class SamsungHealthStepsProcessorTest {
     private HealthStepDataJdbcRepository stepDataRepository;
 
     @Mock
+    private HealthStepDailyAggregationService aggregationService;
+
+    @Mock
     private HealthDataCollectionRequestEntity request;
 
     @Mock
@@ -47,42 +54,54 @@ class SamsungHealthStepsProcessorTest {
     @Captor
     private ArgumentCaptor<List<HealthStepDataUpsertRow>> rowsCaptor;
 
+    @Captor
+    private ArgumentCaptor<List<Instant>> startedAtValuesCaptor;
+
     @InjectMocks
     private SamsungHealthStepsProcessor processor;
 
     @Test
-    void normalizeAndSaveSamsungHealthSteps() throws JacksonException {
+    void normalizeSaveAndAggregateSamsungHealthSteps() throws JacksonException {
         JsonNode payload = loadPayload();
         prepareRequest(payload);
 
         processor.process(request);
 
-        verify(stepDataRepository).upsertAll(rowsCaptor.capture());
+        InOrder callOrder = inOrder(stepDataRepository, aggregationService);
+        callOrder.verify(stepDataRepository).upsertAll(rowsCaptor.capture());
+        callOrder.verify(aggregationService).recalculate(eq(member), eq(HealthDataSource.SAMSUNG_HEALTH), startedAtValuesCaptor.capture());
         List<HealthStepDataUpsertRow> rows = rowsCaptor.getValue();
 
-        assertThat(processor.format()).isEqualTo(
-            new HealthDataFormat(HealthDataSource.SAMSUNG_HEALTH, HealthDataType.STEPS)
-        );
+        assertThat(processor.format()).isEqualTo(new HealthDataFormat(HealthDataSource.SAMSUNG_HEALTH, HealthDataType.STEPS));
         assertThat(rows).hasSize(2);
+        assertThat(startedAtValuesCaptor.getValue()).containsExactly(
+            Instant.parse("2024-11-14T15:00:00Z"), Instant.parse("2024-11-14T15:20:00Z"));
 
         HealthStepDataUpsertRow firstData = rows.get(0);
         assertThat(firstData.memberId()).isEqualTo(1L);
         assertThat(firstData.collectionRequestId()).isEqualTo(10L);
         assertThat(firstData.source()).isEqualTo(HealthDataSource.SAMSUNG_HEALTH);
-        assertThat(firstData.startedAt())
-            .isEqualTo(Instant.parse("2024-11-14T15:00:00Z"));
-        assertThat(firstData.endedAt())
-            .isEqualTo(Instant.parse("2024-11-14T15:10:00Z"));
+        assertThat(firstData.startedAt()).isEqualTo(Instant.parse("2024-11-14T15:00:00Z"));
+        assertThat(firstData.endedAt()).isEqualTo(Instant.parse("2024-11-14T15:10:00Z"));
         assertThat(firstData.steps()).isEqualByComparingTo(new BigDecimal("120"));
         assertThat(firstData.distance()).isEqualByComparingTo(new BigDecimal("0.08"));
         assertThat(firstData.calories()).isEqualByComparingTo(new BigDecimal("4.2"));
 
         HealthStepDataUpsertRow zeroDurationData = rows.get(1);
-        assertThat(zeroDurationData.startedAt())
-            .isEqualTo(zeroDurationData.endedAt());
+        assertThat(zeroDurationData.startedAt()).isEqualTo(zeroDurationData.endedAt());
         assertThat(zeroDurationData.steps()).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(zeroDurationData.distance()).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(zeroDurationData.calories()).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    void useManualRetryUpsertWhenReprocessing() throws JacksonException {
+        prepareRequest(loadPayload());
+
+        processor.reprocess(request);
+
+        verify(stepDataRepository).upsertAllForManualRetry(rowsCaptor.capture());
+        assertThat(rowsCaptor.getValue()).hasSize(2);
     }
 
     private void prepareRequest(JsonNode payload) {
@@ -93,9 +112,7 @@ class SamsungHealthStepsProcessorTest {
     }
 
     private JsonNode loadPayload() throws JacksonException {
-        InputStream inputStream = Objects.requireNonNull(
-            getClass().getResourceAsStream(FIXTURE_PATH)
-        );
+        InputStream inputStream = Objects.requireNonNull(getClass().getResourceAsStream(FIXTURE_PATH));
         return objectMapper.readTree(inputStream);
     }
 }

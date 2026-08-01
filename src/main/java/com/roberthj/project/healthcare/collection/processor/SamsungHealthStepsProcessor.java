@@ -1,11 +1,13 @@
 package com.roberthj.project.healthcare.collection.processor;
 
+import com.roberthj.project.healthcare.collection.aggregation.HealthStepDailyAggregationService;
 import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
 import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
 import com.roberthj.project.healthcare.collection.enums.HealthDataType;
 import com.roberthj.project.healthcare.collection.model.HealthDataFormat;
 import com.roberthj.project.healthcare.collection.repository.HealthStepDataJdbcRepository;
 import com.roberthj.project.healthcare.collection.repository.HealthStepDataUpsertRow;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
@@ -30,33 +32,40 @@ public class SamsungHealthStepsProcessor implements HealthDataProcessor {
         .withResolverStyle(ResolverStyle.STRICT);
 
     private final HealthStepDataJdbcRepository stepDataRepository;
+    private final HealthStepDailyAggregationService aggregationService;
 
     @Override
     public HealthDataFormat format() {
-        return new HealthDataFormat(
-            HealthDataSource.SAMSUNG_HEALTH,
-            HealthDataType.STEPS
-        );
+        return new HealthDataFormat(HealthDataSource.SAMSUNG_HEALTH, HealthDataType.STEPS);
     }
 
     @Override
     public void process(HealthDataCollectionRequestEntity request) {
-        Map<StepDataIdentity, NormalizedStepData> normalizedData = normalize(request.getPayload());
-
-        List<HealthStepDataUpsertRow> rows = normalizedData.values().stream()
-            .map(data -> new HealthStepDataUpsertRow(
-                request.getMember().getId(),
-                request.getId(),
-                HealthDataSource.SAMSUNG_HEALTH,
-                data.startedAt(),
-                data.endedAt(),
-                data.steps(),
-                data.distance(),
-                data.calories()
-            ))
-            .toList();
-
+        List<HealthStepDataUpsertRow> rows = createRows(request);
         stepDataRepository.upsertAll(rows);
+        aggregate(request.getMember(), rows);
+    }
+
+    @Override
+    public void reprocess(HealthDataCollectionRequestEntity request) {
+        List<HealthStepDataUpsertRow> rows = createRows(request);
+        stepDataRepository.upsertAllForManualRetry(rows);
+        aggregate(request.getMember(), rows);
+    }
+
+    private List<HealthStepDataUpsertRow> createRows(HealthDataCollectionRequestEntity request) {
+        Map<StepDataIdentity, NormalizedStepData> normalizedData = normalize(request.getPayload());
+        MemberEntity member = request.getMember();
+        Long requestId = request.getId();
+
+        return normalizedData.values().stream()
+            .map(data -> new HealthStepDataUpsertRow(member.getId(), requestId, HealthDataSource.SAMSUNG_HEALTH,
+                data.startedAt(), data.endedAt(), data.steps(), data.distance(), data.calories()))
+            .toList();
+    }
+
+    private void aggregate(MemberEntity member, List<HealthStepDataUpsertRow> rows) {
+        aggregationService.recalculate(member, HealthDataSource.SAMSUNG_HEALTH, rows.stream().map(HealthStepDataUpsertRow::startedAt).toList());
     }
 
     private Map<StepDataIdentity, NormalizedStepData> normalize(JsonNode payload) {
@@ -65,41 +74,24 @@ public class SamsungHealthStepsProcessor implements HealthDataProcessor {
 
         for (JsonNode entry : entries) {
             JsonNode period = entry.path("period");
-            NormalizedStepData data = new NormalizedStepData(
-                toInstant(period.path("from").stringValue()),
+            NormalizedStepData data = new NormalizedStepData(toInstant(period.path("from").stringValue()),
                 toInstant(period.path("to").stringValue()),
-                entry.path("steps").decimalValue(),
-                entry.path("distance").path("value").decimalValue(),
-                entry.path("calories").path("value").decimalValue()
-            );
+                entry.path("steps").decimalValue(), entry.path("distance").path("value").decimalValue(),
+                entry.path("calories").path("value").decimalValue());
 
-            normalizedData.put(
-                new StepDataIdentity(data.startedAt(), data.endedAt()),
-                data
-            );
+            normalizedData.put(new StepDataIdentity(data.startedAt(), data.endedAt()), data);
         }
 
         return normalizedData;
     }
 
     private Instant toInstant(String value) {
-        return LocalDateTime.parse(value, DATE_TIME_FORMATTER)
-            .atZone(SOURCE_TIME_ZONE)
-            .toInstant();
+        return LocalDateTime.parse(value, DATE_TIME_FORMATTER).atZone(SOURCE_TIME_ZONE).toInstant();
     }
 
-    private record StepDataIdentity(
-        Instant startedAt,
-        Instant endedAt
-    ) {
+    private record StepDataIdentity(Instant startedAt, Instant endedAt) {
     }
 
-    private record NormalizedStepData(
-        Instant startedAt,
-        Instant endedAt,
-        BigDecimal steps,
-        BigDecimal distance,
-        BigDecimal calories
-    ) {
+    private record NormalizedStepData(Instant startedAt, Instant endedAt, BigDecimal steps, BigDecimal distance, BigDecimal calories) {
     }
 }

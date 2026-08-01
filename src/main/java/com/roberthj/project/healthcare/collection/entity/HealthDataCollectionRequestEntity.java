@@ -98,4 +98,8 @@ public class HealthDataCollectionRequestEntity extends BaseEntity {
     ) {
         return new HealthDataCollectionRequestEntity(member, dataType, source, payload);
     }
+
+    public void complete() {
+        this.status = CollectionRequestStatus.COMPLETED;
+    }
 }
