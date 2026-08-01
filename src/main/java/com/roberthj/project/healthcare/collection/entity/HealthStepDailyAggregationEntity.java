@@ -101,9 +101,4 @@ public class HealthStepDailyAggregationEntity extends BaseEntity {
         );
     }
 
-    public void update(BigDecimal steps, BigDecimal distance, BigDecimal calories) {
-        this.steps = steps;
-        this.distance = distance;
-        this.calories = calories;
-    }
 }

@@ -9,3 +9,12 @@ spring:
     open-in-view: false
     properties:
       hibernate.type.json_format_mapper: jackson3 # 스웨거 사용으로 인해 jackson2가 같이 쓰이고 있어서 설정으로 명시
+
+healthcare:
+  collection:
+    steps:
+      aggregation:
+        time-zones:
+          - Asia/Seoul
+          - UTC
+        default-time-zone: Asia/Seoul
