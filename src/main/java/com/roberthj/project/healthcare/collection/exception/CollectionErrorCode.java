@@ -8,6 +8,16 @@ public enum CollectionErrorCode implements ErrorCode {
 
     INVALID_PAYLOAD(HttpStatus.BAD_REQUEST, "COLLECTION001", "수집 요청 형식이 올바르지 않습니다."),
     RECORD_KEY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "COLLECTION002", "접근할 수 없는 건강 데이터입니다."),
+    PROCESSOR_NOT_FOUND(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "COLLECTION003",
+        "건강 데이터 처리기를 찾을 수 없습니다."
+    ),
+    PROCESSOR_ALREADY_REGISTERED(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "COLLECTION004",
+        "건강 데이터 처리기가 중복 등록되었습니다."
+    ),
     ;
 
     private final HttpStatusCode httpStatusCode;

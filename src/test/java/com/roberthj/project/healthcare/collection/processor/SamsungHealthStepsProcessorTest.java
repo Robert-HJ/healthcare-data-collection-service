@@ -1,0 +1,101 @@
+package com.roberthj.project.healthcare.collection.processor;
+
+import com.roberthj.project.healthcare.collection.entity.HealthDataCollectionRequestEntity;
+import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
+import com.roberthj.project.healthcare.collection.enums.HealthDataType;
+import com.roberthj.project.healthcare.collection.model.HealthDataFormat;
+import com.roberthj.project.healthcare.collection.repository.HealthStepDataJdbcRepository;
+import com.roberthj.project.healthcare.collection.repository.HealthStepDataUpsertRow;
+import com.roberthj.project.healthcare.member.entity.MemberEntity;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class SamsungHealthStepsProcessorTest {
+
+    private static final String FIXTURE_PATH = "/fixtures/collection/samsung-health-valid.json";
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Mock
+    private HealthStepDataJdbcRepository stepDataRepository;
+
+    @Mock
+    private HealthDataCollectionRequestEntity request;
+
+    @Mock
+    private MemberEntity member;
+
+    @Captor
+    private ArgumentCaptor<List<HealthStepDataUpsertRow>> rowsCaptor;
+
+    @InjectMocks
+    private SamsungHealthStepsProcessor processor;
+
+    @Test
+    void normalizeAndSaveSamsungHealthSteps() throws JacksonException {
+        JsonNode payload = loadPayload();
+        prepareRequest(payload);
+
+        processor.process(request);
+
+        verify(stepDataRepository).upsertAll(rowsCaptor.capture());
+        List<HealthStepDataUpsertRow> rows = rowsCaptor.getValue();
+
+        assertThat(processor.format()).isEqualTo(
+            new HealthDataFormat(HealthDataSource.SAMSUNG_HEALTH, HealthDataType.STEPS)
+        );
+        assertThat(rows).hasSize(2);
+
+        HealthStepDataUpsertRow firstData = rows.get(0);
+        assertThat(firstData.memberId()).isEqualTo(1L);
+        assertThat(firstData.collectionRequestId()).isEqualTo(10L);
+        assertThat(firstData.source()).isEqualTo(HealthDataSource.SAMSUNG_HEALTH);
+        assertThat(firstData.startedAt())
+            .isEqualTo(Instant.parse("2024-11-14T15:00:00Z"));
+        assertThat(firstData.endedAt())
+            .isEqualTo(Instant.parse("2024-11-14T15:10:00Z"));
+        assertThat(firstData.steps()).isEqualByComparingTo(new BigDecimal("120"));
+        assertThat(firstData.distance()).isEqualByComparingTo(new BigDecimal("0.08"));
+        assertThat(firstData.calories()).isEqualByComparingTo(new BigDecimal("4.2"));
+
+        HealthStepDataUpsertRow zeroDurationData = rows.get(1);
+        assertThat(zeroDurationData.startedAt())
+            .isEqualTo(zeroDurationData.endedAt());
+        assertThat(zeroDurationData.steps()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(zeroDurationData.distance()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(zeroDurationData.calories()).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
+    private void prepareRequest(JsonNode payload) {
+        when(request.getPayload()).thenReturn(payload);
+        when(request.getId()).thenReturn(10L);
+        when(request.getMember()).thenReturn(member);
+        when(member.getId()).thenReturn(1L);
+    }
+
+    private JsonNode loadPayload() throws JacksonException {
+        InputStream inputStream = Objects.requireNonNull(
+            getClass().getResourceAsStream(FIXTURE_PATH)
+        );
+        return objectMapper.readTree(inputStream);
+    }
+}

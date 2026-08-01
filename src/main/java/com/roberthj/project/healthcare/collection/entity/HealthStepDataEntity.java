@@ -116,15 +116,4 @@ public class HealthStepDataEntity extends BaseEntity {
         );
     }
 
-    public void update(
-        HealthDataCollectionRequestEntity collectionRequest,
-        BigDecimal steps,
-        BigDecimal distance,
-        BigDecimal calories
-    ) {
-        this.collectionRequest = collectionRequest;
-        this.steps = steps;
-        this.distance = distance;
-        this.calories = calories;
-    }
 }

@@ -4,7 +4,7 @@ spring:
       on-profile: local
 
   datasource:
-    url: jdbc:mysql://localhost:3306/healthcare
+    url: jdbc:mysql://localhost:3306/healthcare?rewriteBatchedStatements=true
     username: healthcare
     password: healthcare
 
