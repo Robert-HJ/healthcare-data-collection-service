@@ -1,9 +1,17 @@
 package com.roberthj.project.healthcare.collection.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.Clock;
 
 @Configuration
 @EnableConfigurationProperties(HealthStepAggregationProperties.class)
 public class HealthStepAggregationConfig {
+
+    @Bean
+    public Clock systemClock() {
+        return Clock.systemUTC();
+    }
 }

@@ -69,7 +69,8 @@ CREATE TABLE IF NOT EXISTS health_step_daily_aggregation
     updated_at     DATETIME(6)    NOT NULL,
     CONSTRAINT pk_health_step_daily_aggregation PRIMARY KEY (id),
     CONSTRAINT uk_health_step_daily_aggregation
-        UNIQUE (member_id, timezone, source, aggregate_date)
+        UNIQUE (member_id, timezone, source, aggregate_date),
+    INDEX idx_health_step_daily_aggregation_member_timezone_date (member_id, timezone, aggregate_date)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;

@@ -1,9 +1,13 @@
 package com.roberthj.project.healthcare.collection.repository;
 
+import com.roberthj.project.healthcare.collection.aggregation.HealthStepDailyAggregationRow;
+import com.roberthj.project.healthcare.collection.aggregation.HealthStepMonthlyAggregationRow;
+import com.roberthj.project.healthcare.collection.enums.HealthDataSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -30,6 +34,31 @@ public class HealthStepDailyAggregationJdbcRepository {
             updated_at = incoming.updated_at
         """;
 
+    private static final String FIND_DAILY_SQL = """
+        SELECT aggregate_date, source, steps, distance, calories
+        FROM health_step_daily_aggregation
+        WHERE member_id = ?
+          AND timezone = ?
+          AND aggregate_date >= ?
+          AND aggregate_date < ?
+        ORDER BY aggregate_date, source
+        """;
+
+    private static final String FIND_MONTHLY_SQL = """
+        SELECT MONTH(aggregate_date) AS aggregate_month,
+               source,
+               SUM(steps) AS steps,
+               SUM(distance) AS distance,
+               SUM(calories) AS calories
+        FROM health_step_daily_aggregation
+        WHERE member_id = ?
+          AND timezone = ?
+          AND aggregate_date >= ?
+          AND aggregate_date < ?
+        GROUP BY MONTH(aggregate_date), source
+        ORDER BY aggregate_month, source
+        """;
+
     private final JdbcTemplate jdbcTemplate;
 
     public void upsertAll(List<HealthStepDailyAggregationUpsertRow> rows) {
@@ -51,5 +80,25 @@ public class HealthStepDailyAggregationJdbcRepository {
                 statement.setBigDecimal(7, row.calories());
             }
         );
+    }
+
+    public List<HealthStepDailyAggregationRow> findDaily(Long memberId, String timezone, LocalDate from, LocalDate to) {
+        return jdbcTemplate.query(FIND_DAILY_SQL, (resultSet, rowNumber) -> new HealthStepDailyAggregationRow(
+            resultSet.getObject("aggregate_date", LocalDate.class),
+            HealthDataSource.valueOf(resultSet.getString("source")),
+            resultSet.getBigDecimal("steps"),
+            resultSet.getBigDecimal("distance"),
+            resultSet.getBigDecimal("calories")
+        ), memberId, timezone, from, to);
+    }
+
+    public List<HealthStepMonthlyAggregationRow> findMonthly(Long memberId, String timezone, LocalDate from, LocalDate to) {
+        return jdbcTemplate.query(FIND_MONTHLY_SQL, (resultSet, rowNumber) -> new HealthStepMonthlyAggregationRow(
+            resultSet.getInt("aggregate_month"),
+            HealthDataSource.valueOf(resultSet.getString("source")),
+            resultSet.getBigDecimal("steps"),
+            resultSet.getBigDecimal("distance"),
+            resultSet.getBigDecimal("calories")
+        ), memberId, timezone, from, to);
     }
 }
