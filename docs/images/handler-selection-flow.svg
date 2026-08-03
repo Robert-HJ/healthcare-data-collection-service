@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="960" viewBox="0 0 1680 960" role="img" aria-labelledby="title desc">
+  <title id="title">Source와 Data Type에 따른 검증기 및 처리기 선택 흐름</title>
+  <desc id="desc">The collection request first selects a validator by source and data type, stores the validated payload, and later selects a processor by the same key for source-specific normalization and the common persistence and aggregation pipeline.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <style>
+      .title { font: 700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; }
+      .lane-title { font: 700 17px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; }
+      .box-title { font: 700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; }
+      .box-text { font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+      .code-text { font: 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fill: #334155; }
+      .label { font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
+      .arrow { fill: none; stroke: #334155; stroke-width: 2.2; marker-end: url(#arrow); }
+      .arrow-dashed { fill: none; stroke: #64748b; stroke-width: 2; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1680" height="960" rx="24" fill="#ffffff"/>
+  <text x="48" y="54" class="title">Source와 Data Type에 따른 요청 처리 구조</text>
+
+  <rect x="32" y="82" width="1616" height="358" rx="18" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="56" y="116" class="lane-title">동기 접수 · 입력 계약 검증</text>
+
+  <rect x="65" y="170" width="220" height="104" rx="13" fill="#ffffff" stroke="#60a5fa" stroke-width="2"/>
+  <text x="175" y="207" text-anchor="middle" class="box-title">Collection Controller</text>
+  <text x="175" y="237" text-anchor="middle" class="box-text">JWT + 원본 JsonNode</text>
+
+  <rect x="350" y="157" width="240" height="130" rx="13" fill="#ffffff" stroke="#60a5fa" stroke-width="2"/>
+  <text x="470" y="194" text-anchor="middle" class="box-title">Collection Service</text>
+  <text x="470" y="224" text-anchor="middle" class="box-text">메타데이터·소유권 확인</text>
+  <text x="470" y="250" text-anchor="middle" class="box-text">검증 완료 후 원본 저장</text>
+
+  <rect x="655" y="138" width="320" height="168" rx="13" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="815" y="175" text-anchor="middle" class="box-title">CollectionPayloadValidator</text>
+  <text x="815" y="205" text-anchor="middle" class="code-text">validateMetadata(payload)</text>
+  <rect x="695" y="228" width="240" height="48" rx="10" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="815" y="258" text-anchor="middle" class="code-text">HealthDataFormat</text>
+
+  <rect x="1040" y="132" width="285" height="180" rx="13" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="1182" y="169" text-anchor="middle" class="box-title">검증기 Map 조회</text>
+  <text x="1182" y="199" text-anchor="middle" class="code-text">Map&lt;HealthDataFormat,</text>
+  <text x="1182" y="223" text-anchor="middle" class="code-text">HealthDataValidator&gt;</text>
+  <text x="1182" y="260" text-anchor="middle" class="box-text">key = Source + Data Type</text>
+  <text x="1182" y="285" text-anchor="middle" class="box-text">일치하는 구현체 선택</text>
+
+  <rect x="1390" y="120" width="220" height="86" rx="13" fill="#ffffff" stroke="#60a5fa" stroke-width="2"/>
+  <text x="1500" y="154" text-anchor="middle" class="box-title">Samsung Validator</text>
+  <text x="1500" y="181" text-anchor="middle" class="box-text">로컬 시각·수치 계약</text>
+
+  <rect x="1390" y="238" width="220" height="86" rx="13" fill="#ffffff" stroke="#60a5fa" stroke-width="2"/>
+  <text x="1500" y="272" text-anchor="middle" class="box-title">HealthKit Validator</text>
+  <text x="1500" y="299" text-anchor="middle" class="box-text">UTC 시각·문자열 수치 계약</text>
+
+  <rect x="1118" y="354" width="330" height="54" rx="12" fill="#dbeafe" stroke="#60a5fa" stroke-width="2"/>
+  <text x="1283" y="387" text-anchor="middle" class="box-title">검증 완료 → 원본 요청 저장 → 202</text>
+
+  <path d="M285 222 H350" class="arrow"/>
+  <path d="M590 222 H655" class="arrow"/>
+  <path d="M975 222 H1040" class="arrow"/>
+  <path d="M1325 196 H1360 V163 H1390" class="arrow-dashed"/>
+  <path d="M1325 248 H1360 V281 H1390" class="arrow-dashed"/>
+  <path d="M1182 312 V332 H1283 V354" class="arrow"/>
+
+  <rect x="32" y="468" width="1616" height="454" rx="18" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="56" y="502" class="lane-title">비동기 처리 · 구현체 선택과 공통 처리</text>
+
+  <rect x="65" y="579" width="255" height="112" rx="13" fill="#ffffff" stroke="#4ade80" stroke-width="2"/>
+  <text x="192" y="616" text-anchor="middle" class="box-title">Processing Service</text>
+  <text x="192" y="646" text-anchor="middle" class="box-text">선점된 요청의 Source와</text>
+  <text x="192" y="671" text-anchor="middle" class="box-text">Data Type 전달</text>
+
+  <rect x="385" y="552" width="315" height="166" rx="13" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+  <text x="542" y="589" text-anchor="middle" class="box-title">HealthDataProcessorRegistry</text>
+  <text x="542" y="619" text-anchor="middle" class="code-text">Map&lt;HealthDataFormat,</text>
+  <text x="542" y="643" text-anchor="middle" class="code-text">HealthDataProcessor&gt;</text>
+  <rect x="425" y="664" width="235" height="38" rx="9" fill="#dcfce7" stroke="#86efac"/>
+  <text x="542" y="689" text-anchor="middle" class="box-text">Source + Data Type으로 조회</text>
+
+  <rect x="765" y="530" width="270" height="98" rx="13" fill="#ffffff" stroke="#4ade80" stroke-width="2"/>
+  <text x="900" y="567" text-anchor="middle" class="box-title">Samsung Steps Processor</text>
+  <text x="900" y="597" text-anchor="middle" class="box-text">Samsung 시각·수치 정규화</text>
+
+  <rect x="765" y="662" width="270" height="98" rx="13" fill="#ffffff" stroke="#4ade80" stroke-width="2"/>
+  <text x="900" y="699" text-anchor="middle" class="box-title">HealthKit Steps Processor</text>
+  <text x="900" y="729" text-anchor="middle" class="box-text">HealthKit 시각·수치 정규화</text>
+
+  <rect x="1100" y="552" width="315" height="166" rx="13" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+  <text x="1257" y="589" text-anchor="middle" class="box-title">AbstractHealthStepsProcessor</text>
+  <text x="1257" y="619" text-anchor="middle" class="code-text">process(request)</text>
+  <text x="1257" y="651" text-anchor="middle" class="box-text">1. normalizeEntry() 호출</text>
+  <text x="1257" y="677" text-anchor="middle" class="box-text">2. 동일 구간 중복 정리</text>
+  <text x="1257" y="703" text-anchor="middle" class="box-text">3. 저장·집계 공통 흐름 수행</text>
+
+  <rect x="1175" y="794" width="200" height="78" rx="12" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+  <text x="1275" y="827" text-anchor="middle" class="box-title">JDBC batch upsert</text>
+  <text x="1275" y="853" text-anchor="middle" class="box-text">걸음 활동 데이터</text>
+
+  <rect x="1445" y="794" width="170" height="78" rx="12" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+  <text x="1530" y="827" text-anchor="middle" class="box-title">일별 집계</text>
+  <text x="1530" y="853" text-anchor="middle" class="box-text">영향 날짜 재계산</text>
+
+  <path d="M320 635 H385" class="arrow"/>
+  <path d="M700 604 H735 V579 H765" class="arrow-dashed"/>
+  <path d="M700 666 H735 V711 H765" class="arrow-dashed"/>
+  <path d="M1035 579 H1067 V615 H1100" class="arrow"/>
+  <path d="M1035 711 H1067 V655 H1100" class="arrow"/>
+  <path d="M1257 718 V758 H1275 V794" class="arrow"/>
+  <path d="M1375 833 H1445" class="arrow"/>
+
+  <rect x="65" y="780" width="970" height="108" rx="12" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+  <text x="90" y="814" class="box-title">처리기 구분 기준</text>
+  <text x="90" y="844" class="box-text">Source별 입력 해석과 Data Type별 저장·집계 구조가 달라질 수 있어 두 값을 함께 선택 키로 사용합니다.</text>
+  <text x="90" y="872" class="label">현재 Steps에서 확인된 중복 정리·저장·집계 흐름만 공유하며, 다른 Data Type의 공통 모델은 미리 가정하지 않습니다.</text>
+</svg>
