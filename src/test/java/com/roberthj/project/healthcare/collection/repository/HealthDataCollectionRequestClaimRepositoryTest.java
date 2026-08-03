@@ -218,21 +218,11 @@ class HealthDataCollectionRequestClaimRepositoryTest {
 
     private MemberEntity saveMember() {
         String recordKey = UUID.randomUUID().toString();
-        return memberRepository.saveAndFlush(MemberEntity.create(
-            "홍길동",
-            "길동",
-            "member-" + recordKey + "@example.com",
-            "encoded-password",
-            recordKey
-        ));
+        return memberRepository.saveAndFlush(MemberEntity.create("홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
     }
 
     private HealthDataCollectionRequestEntity saveRequest(MemberEntity member) {
-        return collectionRequestRepository.saveAndFlush(HealthDataCollectionRequestEntity.create(
-            member,
-            HealthDataType.STEPS,
-            HealthDataSource.SAMSUNG_HEALTH,
-            JsonNodeFactory.instance.objectNode()
-        ));
+        return collectionRequestRepository.saveAndFlush(HealthDataCollectionRequestEntity.create(member,
+            HealthDataType.STEPS, HealthDataSource.SAMSUNG_HEALTH, JsonNodeFactory.instance.objectNode()));
     }
 }

@@ -26,8 +26,7 @@ public class HealthDataCollectionRequestStateService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<Long> claimNext() {
-        Optional<Long> requestId = claimRepository.findNextRequest(workerProperties.maxRetryCount(),
-            workerProperties.staleProcessingTimeout());
+        Optional<Long> requestId = claimRepository.findNextRequest(workerProperties.maxRetryCount(), workerProperties.staleProcessingTimeout());
         requestId.ifPresent(claimRepository::updateProcessing);
         return requestId;
     }

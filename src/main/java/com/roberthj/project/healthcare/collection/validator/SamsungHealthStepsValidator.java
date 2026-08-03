@@ -20,9 +20,8 @@ import static com.roberthj.project.healthcare.collection.validator.ValidationUti
 @Component
 public class SamsungHealthStepsValidator implements HealthDataValidator {
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER =
-        DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
-            .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+        .withResolverStyle(ResolverStyle.STRICT);
 
     @Override
     public HealthDataFormat format() {
@@ -51,14 +50,8 @@ public class SamsungHealthStepsValidator implements HealthDataValidator {
         }
 
         JsonNode period = requireObject(entry, "period", entryPath + ".period");
-        LocalDateTime from = parseDateTime(
-            requireText(period, "from", entryPath + ".period.from"),
-            entryPath + ".period.from"
-        );
-        LocalDateTime to = parseDateTime(
-            requireText(period, "to", entryPath + ".period.to"),
-            entryPath + ".period.to"
-        );
+        LocalDateTime from = parseDateTime(requireText(period, "from", entryPath + ".period.from"), entryPath + ".period.from");
+        LocalDateTime to = parseDateTime(requireText(period, "to", entryPath + ".period.to"), entryPath + ".period.to");
         if (from.isAfter(to)) {
             throw invalid(entryPath + ".period.from은 to보다 늦을 수 없습니다.");
         }
@@ -68,12 +61,7 @@ public class SamsungHealthStepsValidator implements HealthDataValidator {
         validateSteps(entry, entryPath);
     }
 
-    private void validateMeasurement(
-        JsonNode entry,
-        String fieldName,
-        String expectedUnit,
-        String entryPath
-    ) {
+    private void validateMeasurement(JsonNode entry, String fieldName, String expectedUnit, String entryPath) {
         String fieldPath = entryPath + "." + fieldName;
         JsonNode measurement = requireObject(entry, fieldName, fieldPath);
         String unit = requireText(measurement, "unit", fieldPath + ".unit");
@@ -98,11 +86,7 @@ public class SamsungHealthStepsValidator implements HealthDataValidator {
         try {
             return LocalDateTime.parse(value, DATE_TIME_FORMATTER);
         } catch (DateTimeParseException exception) {
-            throw new CollectionException(
-                INVALID_PAYLOAD,
-                fieldPath + "의 시간 형식이 올바르지 않습니다.",
-                exception
-            );
+            throw new CollectionException(INVALID_PAYLOAD, fieldPath + "의 시간 형식이 올바르지 않습니다.", exception);
         }
     }
 }

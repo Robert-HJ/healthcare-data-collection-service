@@ -21,16 +21,12 @@ import static com.roberthj.project.healthcare.collection.validator.ValidationUti
 @Component
 public class HealthKitStepsValidator implements HealthDataValidator {
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER =
-        DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssxx")
-            .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssxx")
+        .withResolverStyle(ResolverStyle.STRICT);
 
     @Override
     public HealthDataFormat format() {
-        return new HealthDataFormat(
-            HealthDataSource.HEALTH_KIT,
-            HealthDataType.STEPS
-        );
+        return new HealthDataFormat(HealthDataSource.HEALTH_KIT, HealthDataType.STEPS);
     }
 
     @Override
@@ -52,14 +48,8 @@ public class HealthKitStepsValidator implements HealthDataValidator {
         }
 
         JsonNode period = requireObject(entry, "period", entryPath + ".period");
-        OffsetDateTime from = parseDateTime(
-            requireText(period, "from", entryPath + ".period.from"),
-            entryPath + ".period.from"
-        );
-        OffsetDateTime to = parseDateTime(
-            requireText(period, "to", entryPath + ".period.to"),
-            entryPath + ".period.to"
-        );
+        OffsetDateTime from = parseDateTime(requireText(period, "from", entryPath + ".period.from"), entryPath + ".period.from");
+        OffsetDateTime to = parseDateTime(requireText(period, "to", entryPath + ".period.to"), entryPath + ".period.to");
         if (from.isAfter(to)) {
             throw invalid(entryPath + ".period.from은 to보다 늦을 수 없습니다.");
         }
@@ -69,12 +59,7 @@ public class HealthKitStepsValidator implements HealthDataValidator {
         validateSteps(entry, entryPath);
     }
 
-    private void validateMeasurement(
-        JsonNode entry,
-        String fieldName,
-        String expectedUnit,
-        String entryPath
-    ) {
+    private void validateMeasurement(JsonNode entry, String fieldName, String expectedUnit, String entryPath) {
         String fieldPath = entryPath + "." + fieldName;
         JsonNode measurement = requireObject(entry, fieldName, fieldPath);
         String unit = requireText(measurement, "unit", fieldPath + ".unit");
@@ -94,11 +79,7 @@ public class HealthKitStepsValidator implements HealthDataValidator {
         try {
             new BigDecimal(steps);
         } catch (NumberFormatException exception) {
-            throw new CollectionException(
-                INVALID_PAYLOAD,
-                fieldPath + "는 숫자로 변환할 수 있는 문자열이어야 합니다.",
-                exception
-            );
+            throw new CollectionException(INVALID_PAYLOAD, fieldPath + "는 숫자로 변환할 수 있는 문자열이어야 합니다.", exception);
         }
     }
 
@@ -106,11 +87,7 @@ public class HealthKitStepsValidator implements HealthDataValidator {
         try {
             return OffsetDateTime.parse(value, DATE_TIME_FORMATTER);
         } catch (DateTimeParseException exception) {
-            throw new CollectionException(
-                INVALID_PAYLOAD,
-                fieldPath + "의 시간 형식이 올바르지 않습니다.",
-                exception
-            );
+            throw new CollectionException(INVALID_PAYLOAD, fieldPath + "의 시간 형식이 올바르지 않습니다.", exception);
         }
     }
 }

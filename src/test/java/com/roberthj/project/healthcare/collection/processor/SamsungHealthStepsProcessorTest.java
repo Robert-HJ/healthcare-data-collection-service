@@ -74,8 +74,7 @@ class SamsungHealthStepsProcessorTest {
 
         assertThat(processor.format()).isEqualTo(new HealthDataFormat(HealthDataSource.SAMSUNG_HEALTH, HealthDataType.STEPS));
         assertThat(rows).hasSize(2);
-        assertThat(startedAtValuesCaptor.getValue()).containsExactly(
-            Instant.parse("2024-11-14T15:00:00Z"), Instant.parse("2024-11-14T15:20:00Z"));
+        assertThat(startedAtValuesCaptor.getValue()).containsExactly(Instant.parse("2024-11-14T15:00:00Z"), Instant.parse("2024-11-14T15:20:00Z"));
 
         HealthStepDataUpsertRow firstData = rows.get(0);
         assertThat(firstData.memberId()).isEqualTo(1L);

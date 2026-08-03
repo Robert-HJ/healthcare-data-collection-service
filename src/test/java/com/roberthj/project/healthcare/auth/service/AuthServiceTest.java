@@ -129,19 +129,9 @@ class AuthServiceTest {
     @Test
     void signInAndIssueAccessToken() {
         SignInRequest request = signInRequest();
-        CustomUserDetails principal = new CustomUserDetails(
-                1L,
-                request.email(),
-                "encoded-password",
-                "record-key"
-        );
-        Authentication authenticated = UsernamePasswordAuthenticationToken.authenticated(
-                principal,
-                null,
-                principal.getAuthorities()
-        );
-        AccessTokenIssuer.IssuedToken issuedToken =
-                new AccessTokenIssuer.IssuedToken("access-token", 3600L);
+        CustomUserDetails principal = new CustomUserDetails(1L, request.email(), "encoded-password", "record-key");
+        Authentication authenticated = UsernamePasswordAuthenticationToken.authenticated(principal, null, principal.getAuthorities());
+        AccessTokenIssuer.IssuedToken issuedToken = new AccessTokenIssuer.IssuedToken("access-token", 3600L);
 
         when(authenticationManager.authenticate(any(Authentication.class)))
                 .thenReturn(authenticated);
@@ -150,8 +140,7 @@ class AuthServiceTest {
 
         SignInResponse response = authService.signIn(request);
 
-        ArgumentCaptor<Authentication> authenticationCaptor =
-                ArgumentCaptor.forClass(Authentication.class);
+        ArgumentCaptor<Authentication> authenticationCaptor = ArgumentCaptor.forClass(Authentication.class);
         verify(authenticationManager).authenticate(authenticationCaptor.capture());
         Authentication requestedAuthentication = authenticationCaptor.getValue();
 
@@ -181,19 +170,11 @@ class AuthServiceTest {
     @Test
     void convertUnknownMemberToBadCredentialsException() {
         SignInRequest request = signInRequest();
-        CustomUserDetailsService userDetailsService =
-                new CustomUserDetailsService(memberRepository);
-        DaoAuthenticationProvider authenticationProvider =
-                new DaoAuthenticationProvider(userDetailsService);
+        CustomUserDetailsService userDetailsService = new CustomUserDetailsService(memberRepository);
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
         authenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder());
-        AuthenticationManager actualAuthenticationManager =
-                new ProviderManager(authenticationProvider);
-        AuthService service = new AuthService(
-                memberRepository,
-                passwordEncoder,
-                actualAuthenticationManager,
-                accessTokenIssuer
-        );
+        AuthenticationManager actualAuthenticationManager = new ProviderManager(authenticationProvider);
+        AuthService service = new AuthService(memberRepository, passwordEncoder, actualAuthenticationManager, accessTokenIssuer);
 
         when(memberRepository.findByEmail(request.email())).thenReturn(Optional.empty());
 
@@ -209,8 +190,7 @@ class AuthServiceTest {
     @Test
     void propagateInternalAuthenticationFailure() {
         SignInRequest request = signInRequest();
-        InternalAuthenticationServiceException exception =
-                new InternalAuthenticationServiceException("Authentication service failure");
+        InternalAuthenticationServiceException exception = new InternalAuthenticationServiceException("Authentication service failure");
 
         when(authenticationManager.authenticate(any(Authentication.class)))
                 .thenThrow(exception);
@@ -220,12 +200,7 @@ class AuthServiceTest {
     }
 
     private SignUpRequest signUpRequest() {
-        return new SignUpRequest(
-                "홍길동",
-                "길동",
-                "member@example.com",
-                "Password!123"
-        );
+        return new SignUpRequest("홍길동", "길동", "member@example.com", "Password!123");
     }
 
     private SignInRequest signInRequest() {

@@ -68,7 +68,6 @@ public class HealthStepDailyAggregationService {
 
     private HealthStepDailyAggregationUpsertRow toUpsertRow(Long memberId, HealthDataSource source, ZoneId timeZone,
                                                             LocalDate aggregateDate, HealthStepAggregationTotals totals) {
-        return new HealthStepDailyAggregationUpsertRow(memberId, timeZone.getId(), source, aggregateDate,
-            totals.steps(), totals.distance(), totals.calories());
+        return new HealthStepDailyAggregationUpsertRow(memberId, timeZone.getId(), source, aggregateDate, totals.steps(), totals.distance(), totals.calories());
     }
 }

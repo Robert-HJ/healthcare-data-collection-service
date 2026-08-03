@@ -51,35 +51,23 @@ class HealthStepQueryServiceTest {
     @Test
     void queryDailyAggregationsForRequestedMonth() {
         when(aggregationRepository.findDaily(1L, "Asia/Seoul", LocalDate.of(2026, 7, 1), LocalDate.of(2026, 8, 1)))
-            .thenReturn(List.of(
-                new HealthStepDailyAggregationRow(LocalDate.of(2026, 7, 1), SAMSUNG_HEALTH,
-                    new BigDecimal("123.5"), new BigDecimal("1.2300"), new BigDecimal("45.600"))
-            ));
+            .thenReturn(List.of(new HealthStepDailyAggregationRow(LocalDate.of(2026, 7, 1), SAMSUNG_HEALTH,
+                new BigDecimal("123.5"), new BigDecimal("1.2300"), new BigDecimal("45.600"))));
 
-        List<HealthStepDailyResponse> responses = queryService.getDaily(
-            1L, "record-key", "record-key", YearMonth.of(2026, 7));
+        List<HealthStepDailyResponse> responses = queryService.getDaily(1L, "record-key", "record-key", YearMonth.of(2026, 7));
 
-        assertThat(responses).containsExactly(
-            new HealthStepDailyResponse(LocalDate.of(2026, 7, 1), SAMSUNG_HEALTH,
-                124L, new BigDecimal("1.23"), new BigDecimal("45.6"))
-        );
+        assertThat(responses).containsExactly(new HealthStepDailyResponse(LocalDate.of(2026, 7, 1), SAMSUNG_HEALTH,
+            124L, new BigDecimal("1.23"), new BigDecimal("45.6")));
     }
 
     @Test
     void queryMonthlyAggregationsForRequestedYear() {
         when(aggregationRepository.findMonthly(1L, "Asia/Seoul", LocalDate.of(2026, 1, 1), LocalDate.of(2027, 1, 1)))
-            .thenReturn(List.of(
-                new HealthStepMonthlyAggregationRow(7, HEALTH_KIT,
-                    new BigDecimal("10.6"), new BigDecimal("2.500"), BigDecimal.ZERO)
-            ));
+            .thenReturn(List.of(new HealthStepMonthlyAggregationRow(7, HEALTH_KIT, new BigDecimal("10.6"), new BigDecimal("2.500"), BigDecimal.ZERO)));
 
-        List<HealthStepMonthlyResponse> responses = queryService.getMonthly(
-            1L, "record-key", "record-key", 2026);
+        List<HealthStepMonthlyResponse> responses = queryService.getMonthly(1L, "record-key", "record-key", 2026);
 
-        assertThat(responses).containsExactly(
-            new HealthStepMonthlyResponse(YearMonth.of(2026, 7), HEALTH_KIT,
-                11L, new BigDecimal("2.5"), BigDecimal.ZERO)
-        );
+        assertThat(responses).containsExactly(new HealthStepMonthlyResponse(YearMonth.of(2026, 7), HEALTH_KIT, 11L, new BigDecimal("2.5"), BigDecimal.ZERO));
     }
 
     @Test
@@ -92,19 +80,15 @@ class HealthStepQueryServiceTest {
         queryService.getDaily(1L, "record-key", "record-key", null);
         queryService.getMonthly(1L, "record-key", "record-key", null);
 
-        verify(aggregationRepository).findDaily(
-            1L, "Asia/Seoul", LocalDate.of(2027, 1, 1), LocalDate.of(2027, 2, 1));
-        verify(aggregationRepository).findMonthly(
-            1L, "Asia/Seoul", LocalDate.of(2027, 1, 1), LocalDate.of(2028, 1, 1));
+        verify(aggregationRepository).findDaily(1L, "Asia/Seoul", LocalDate.of(2027, 1, 1), LocalDate.of(2027, 2, 1));
+        verify(aggregationRepository).findMonthly(1L, "Asia/Seoul", LocalDate.of(2027, 1, 1), LocalDate.of(2028, 1, 1));
     }
 
     @Test
     void rejectDifferentRecordKeyBeforeQueryingAggregations() {
         assertThatThrownBy(() -> queryService.getDaily(1L, "record-key", "other-record-key", null))
-            .isInstanceOfSatisfying(CollectionException.class,
-                exception -> assertThat(exception.getErrorCode()).isEqualTo(RECORD_KEY_ACCESS_DENIED));
+            .isInstanceOfSatisfying(CollectionException.class, exception -> assertThat(exception.getErrorCode()).isEqualTo(RECORD_KEY_ACCESS_DENIED));
 
-        verify(aggregationRepository, never()).findDaily(
-            1L, "Asia/Seoul", LocalDate.of(2027, 1, 1), LocalDate.of(2027, 2, 1));
+        verify(aggregationRepository, never()).findDaily(1L, "Asia/Seoul", LocalDate.of(2027, 1, 1), LocalDate.of(2027, 2, 1));
     }
 }

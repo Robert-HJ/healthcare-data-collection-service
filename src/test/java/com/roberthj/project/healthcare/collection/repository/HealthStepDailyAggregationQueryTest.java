@@ -36,8 +36,7 @@ class HealthStepDailyAggregationQueryTest {
         Long memberId = saveMember().getId();
         saveAggregations(memberId);
 
-        List<HealthStepDailyAggregationRow> rows = aggregationRepository.findDaily(
-            memberId, "Asia/Seoul", LocalDate.of(2026, 7, 1), LocalDate.of(2026, 8, 1));
+        List<HealthStepDailyAggregationRow> rows = aggregationRepository.findDaily(memberId, "Asia/Seoul", LocalDate.of(2026, 7, 1), LocalDate.of(2026, 8, 1));
 
         assertThat(rows).usingRecursiveComparison().withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
             .isEqualTo(List.of(
@@ -74,27 +73,21 @@ class HealthStepDailyAggregationQueryTest {
         ));
     }
 
-    private HealthStepDailyAggregationUpsertRow upsertRow(Long memberId, String date, HealthDataSource source,
-                                                          String steps, String distance, String calories) {
+    private HealthStepDailyAggregationUpsertRow upsertRow(Long memberId, String date, HealthDataSource source, String steps, String distance, String calories) {
         return new HealthStepDailyAggregationUpsertRow(memberId, "Asia/Seoul", source, LocalDate.parse(date),
             new BigDecimal(steps), new BigDecimal(distance), new BigDecimal(calories));
     }
 
-    private HealthStepDailyAggregationRow dailyRow(String date, HealthDataSource source, String steps,
-                                                   String distance, String calories) {
-        return new HealthStepDailyAggregationRow(LocalDate.parse(date), source,
-            new BigDecimal(steps), new BigDecimal(distance), new BigDecimal(calories));
+    private HealthStepDailyAggregationRow dailyRow(String date, HealthDataSource source, String steps, String distance, String calories) {
+        return new HealthStepDailyAggregationRow(LocalDate.parse(date), source, new BigDecimal(steps), new BigDecimal(distance), new BigDecimal(calories));
     }
 
-    private HealthStepMonthlyAggregationRow monthlyRow(int month, HealthDataSource source, String steps,
-                                                       String distance, String calories) {
-        return new HealthStepMonthlyAggregationRow(month, source,
-            new BigDecimal(steps), new BigDecimal(distance), new BigDecimal(calories));
+    private HealthStepMonthlyAggregationRow monthlyRow(int month, HealthDataSource source, String steps, String distance, String calories) {
+        return new HealthStepMonthlyAggregationRow(month, source, new BigDecimal(steps), new BigDecimal(distance), new BigDecimal(calories));
     }
 
     private MemberEntity saveMember() {
         String recordKey = UUID.randomUUID().toString();
-        return memberRepository.save(MemberEntity.create(
-            "홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
+        return memberRepository.save(MemberEntity.create("홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
     }
 }

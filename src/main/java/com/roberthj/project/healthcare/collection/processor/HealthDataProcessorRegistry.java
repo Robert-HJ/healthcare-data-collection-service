@@ -22,25 +22,16 @@ public class HealthDataProcessorRegistry {
         Map<HealthDataFormat, HealthDataProcessor> processorMap = new HashMap<>();
 
         for (HealthDataProcessor processor : processors) {
-            HealthDataProcessor previousProcessor = processorMap.putIfAbsent(
-                processor.format(),
-                processor
-            );
+            HealthDataProcessor previousProcessor = processorMap.putIfAbsent(processor.format(), processor);
             if (previousProcessor != null) {
-                throw new CollectionException(
-                    PROCESSOR_ALREADY_REGISTERED,
-                    processor.format().toString()
-                );
+                throw new CollectionException(PROCESSOR_ALREADY_REGISTERED, processor.format().toString());
             }
         }
 
         this.processors = Map.copyOf(processorMap);
     }
 
-    public HealthDataProcessor getProcessor(
-        HealthDataSource source,
-        HealthDataType dataType
-    ) {
+    public HealthDataProcessor getProcessor(HealthDataSource source, HealthDataType dataType) {
         HealthDataFormat format = new HealthDataFormat(source, dataType);
         HealthDataProcessor processor = processors.get(format);
 

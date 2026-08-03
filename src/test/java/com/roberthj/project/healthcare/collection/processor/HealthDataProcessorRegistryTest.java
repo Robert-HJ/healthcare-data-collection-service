@@ -19,12 +19,8 @@ class HealthDataProcessorRegistryTest {
 
     @Test
     void returnProcessorMatchingSourceAndDataType() {
-        HealthDataProcessor samsungStepsProcessor = processor(
-            new HealthDataFormat(SAMSUNG_HEALTH, STEPS)
-        );
-        HealthDataProcessorRegistry registry = new HealthDataProcessorRegistry(
-            List.of(samsungStepsProcessor)
-        );
+        HealthDataProcessor samsungStepsProcessor = processor(new HealthDataFormat(SAMSUNG_HEALTH, STEPS));
+        HealthDataProcessorRegistry registry = new HealthDataProcessorRegistry(List.of(samsungStepsProcessor));
 
         HealthDataProcessor result = registry.getProcessor(SAMSUNG_HEALTH, STEPS);
 
@@ -33,25 +29,18 @@ class HealthDataProcessorRegistryTest {
 
     @Test
     void rejectUnsupportedSourceAndDataType() {
-        HealthDataProcessorRegistry registry = new HealthDataProcessorRegistry(
-            List.of(processor(new HealthDataFormat(SAMSUNG_HEALTH, STEPS)))
-        );
+        HealthDataProcessorRegistry registry = new HealthDataProcessorRegistry(List.of(processor(new HealthDataFormat(SAMSUNG_HEALTH, STEPS))));
 
         assertThatThrownBy(() -> registry.getProcessor(HEALTH_KIT, STEPS))
-            .isInstanceOfSatisfying(CollectionException.class, exception ->
-                assertThat(exception.getErrorCode()).isEqualTo(PROCESSOR_NOT_FOUND)
-            );
+            .isInstanceOfSatisfying(CollectionException.class, exception -> assertThat(exception.getErrorCode()).isEqualTo(PROCESSOR_NOT_FOUND));
     }
 
     @Test
     void rejectDuplicateProcessorFormat() {
         HealthDataFormat format = new HealthDataFormat(SAMSUNG_HEALTH, STEPS);
 
-        assertThatThrownBy(() -> new HealthDataProcessorRegistry(
-            List.of(processor(format), processor(format))
-        )).isInstanceOfSatisfying(CollectionException.class, exception ->
-            assertThat(exception.getErrorCode()).isEqualTo(PROCESSOR_ALREADY_REGISTERED)
-        );
+        assertThatThrownBy(() -> new HealthDataProcessorRegistry(List.of(processor(format), processor(format))))
+            .isInstanceOfSatisfying(CollectionException.class, exception -> assertThat(exception.getErrorCode()).isEqualTo(PROCESSOR_ALREADY_REGISTERED));
     }
 
     private HealthDataProcessor processor(HealthDataFormat format) {

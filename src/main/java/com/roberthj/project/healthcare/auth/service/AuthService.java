@@ -83,13 +83,11 @@ public class AuthService {
     public SignInResponse signIn(SignInRequest request) {
         try {
             // 1. Security를 통한 로그인 처리
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
             // 2. 결과 인증 객체를 통해 JWT 토큰 발급
             CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-            AccessTokenIssuer.IssuedToken token =
-                    accessTokenIssuer.issue(principal.getId(), principal.getRecordKey());
+            AccessTokenIssuer.IssuedToken token = accessTokenIssuer.issue(principal.getId(), principal.getRecordKey());
 
             // 3. 발급 결과 반환
             return SignInResponse.from(token);

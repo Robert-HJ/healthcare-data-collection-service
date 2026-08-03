@@ -24,9 +24,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
-            MethodArgumentNotValidException exception
-    ) {
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         String detailMessage = exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -39,10 +37,7 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(BaseErrorCode.BAD_REQUEST, detailMessage));
     }
 
-    @ExceptionHandler({
-            HttpMessageNotReadableException.class,
-            MethodArgumentTypeMismatchException.class
-    })
+    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception exception) {
         return ResponseEntity
                 .status(BaseErrorCode.BAD_REQUEST.getHttpStatusCode())

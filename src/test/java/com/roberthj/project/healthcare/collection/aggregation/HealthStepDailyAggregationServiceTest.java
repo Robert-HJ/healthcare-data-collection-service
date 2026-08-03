@@ -95,9 +95,7 @@ class HealthStepDailyAggregationServiceTest {
         ));
         aggregationService.recalculate(member, HealthDataSource.SAMSUNG_HEALTH, List.of(FIRST_STARTED_AT, SECOND_STARTED_AT));
 
-        stepDataJdbcRepository.upsertAll(List.of(
-            row(member, secondRequest, FIRST_STARTED_AT, "150", "0.12", "6.3")
-        ));
+        stepDataJdbcRepository.upsertAll(List.of(row(member, secondRequest, FIRST_STARTED_AT, "150", "0.12", "6.3")));
         aggregationService.recalculate(member, HealthDataSource.SAMSUNG_HEALTH, List.of(FIRST_STARTED_AT));
 
         Map<String, HealthStepDailyAggregationEntity> aggregations = findAggregationsByKey();
@@ -109,8 +107,7 @@ class HealthStepDailyAggregationServiceTest {
 
     private MemberEntity saveMember() {
         String recordKey = UUID.randomUUID().toString();
-        return memberRepository.saveAndFlush(
-            MemberEntity.create("홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
+        return memberRepository.saveAndFlush(MemberEntity.create("홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
     }
 
     private HealthDataCollectionRequestEntity saveRequest(MemberEntity member) {

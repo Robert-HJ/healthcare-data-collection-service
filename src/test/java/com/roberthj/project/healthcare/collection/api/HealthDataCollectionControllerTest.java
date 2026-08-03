@@ -35,8 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class HealthDataCollectionControllerTest {
 
-    private static final String FIXTURE_PATH =
-        "/fixtures/collection/samsung-health-valid.json";
+    private static final String FIXTURE_PATH = "/fixtures/collection/samsung-health-valid.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -121,9 +120,7 @@ class HealthDataCollectionControllerTest {
     }
 
     private ObjectNode loadPayload() throws JacksonException {
-        InputStream inputStream = Objects.requireNonNull(
-            getClass().getResourceAsStream(FIXTURE_PATH)
-        );
+        InputStream inputStream = Objects.requireNonNull(getClass().getResourceAsStream(FIXTURE_PATH));
         return (ObjectNode) objectMapper.readTree(inputStream);
     }
 }

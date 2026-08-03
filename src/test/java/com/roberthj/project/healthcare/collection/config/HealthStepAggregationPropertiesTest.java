@@ -23,12 +23,8 @@ class HealthStepAggregationPropertiesTest {
             .run(context -> {
                 assertThat(context).hasNotFailed();
 
-                HealthStepAggregationProperties properties = context.getBean(
-                    HealthStepAggregationProperties.class);
-                assertThat(properties.timeZones()).containsExactly(
-                    ZoneId.of("Asia/Seoul"),
-                    ZoneId.of("UTC")
-                );
+                HealthStepAggregationProperties properties = context.getBean(HealthStepAggregationProperties.class);
+                assertThat(properties.timeZones()).containsExactly(ZoneId.of("Asia/Seoul"), ZoneId.of("UTC"));
                 assertThat(properties.defaultTimeZone()).isEqualTo(ZoneId.of("Asia/Seoul"));
             });
     }

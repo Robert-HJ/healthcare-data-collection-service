@@ -44,23 +44,10 @@ class HealthStepDataRepositoryTest {
     @Test
     void saveStepDataAndDailyAggregation() {
         String recordKey = UUID.randomUUID().toString();
-        MemberEntity member = memberRepository.save(
-            MemberEntity.create(
-                "홍길동",
-                "길동",
-                "member-" + recordKey + "@example.com",
-                "encoded-password",
-                recordKey
-            )
-        );
-        HealthDataCollectionRequestEntity request = collectionRequestRepository.save(
-            HealthDataCollectionRequestEntity.create(
-                member,
-                HealthDataType.STEPS,
-                HealthDataSource.SAMSUNG_HEALTH,
-                JsonNodeFactory.instance.objectNode()
-            )
-        );
+        MemberEntity member = memberRepository.save(MemberEntity.create(
+            "홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
+        HealthDataCollectionRequestEntity request = collectionRequestRepository.save(HealthDataCollectionRequestEntity.create(
+            member, HealthDataType.STEPS, HealthDataSource.SAMSUNG_HEALTH, JsonNodeFactory.instance.objectNode()));
 
         HealthStepDataEntity stepData = stepDataRepository.saveAndFlush(
             HealthStepDataEntity.create(
@@ -74,18 +61,9 @@ class HealthStepDataRepositoryTest {
                 new BigDecimal("4.2")
             )
         );
-        HealthStepDailyAggregationEntity dailyAggregation =
-            dailyAggregationRepository.saveAndFlush(
-                HealthStepDailyAggregationEntity.create(
-                    member,
-                    "Asia/Seoul",
-                    HealthDataSource.SAMSUNG_HEALTH,
-                    LocalDate.of(2026, 7, 30),
-                    new BigDecimal("120.5"),
-                    new BigDecimal("0.08"),
-                    new BigDecimal("4.2")
-                )
-            );
+        HealthStepDailyAggregationEntity dailyAggregation = dailyAggregationRepository.saveAndFlush(
+            HealthStepDailyAggregationEntity.create(member, "Asia/Seoul", HealthDataSource.SAMSUNG_HEALTH,
+                LocalDate.of(2026, 7, 30), new BigDecimal("120.5"), new BigDecimal("0.08"), new BigDecimal("4.2")));
 
         assertThat(stepData.getId()).isNotNull();
         assertThat(stepData.getSteps()).isEqualByComparingTo("120.5");

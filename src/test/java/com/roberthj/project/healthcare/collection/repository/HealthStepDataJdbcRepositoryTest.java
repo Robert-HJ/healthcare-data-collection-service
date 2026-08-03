@@ -68,12 +68,8 @@ class HealthStepDataJdbcRepositoryTest {
         HealthDataCollectionRequestEntity olderRequest = saveRequest(member);
         HealthDataCollectionRequestEntity newerRequest = saveRequest(member);
 
-        stepDataJdbcRepository.upsertAll(List.of(
-            row(member, olderRequest, FIRST_STARTED_AT, FIRST_ENDED_AT, "100", "0.08", "4.2")
-        ));
-        stepDataJdbcRepository.upsertAll(List.of(
-            row(member, newerRequest, FIRST_STARTED_AT, FIRST_ENDED_AT, "300", "0.24", "12.6")
-        ));
+        stepDataJdbcRepository.upsertAll(List.of(row(member, olderRequest, FIRST_STARTED_AT, FIRST_ENDED_AT, "100", "0.08", "4.2")));
+        stepDataJdbcRepository.upsertAll(List.of(row(member, newerRequest, FIRST_STARTED_AT, FIRST_ENDED_AT, "300", "0.24", "12.6")));
 
         HealthStepDataEntity updatedData = findFirstStepData(member.getId());
         assertThat(updatedData.getCollectionRequest().getId()).isEqualTo(newerRequest.getId());
@@ -87,12 +83,8 @@ class HealthStepDataJdbcRepositoryTest {
         MemberEntity member = saveMember();
         HealthDataCollectionRequestEntity request = saveRequest(member);
 
-        stepDataJdbcRepository.upsertAll(List.of(
-            row(member, request, FIRST_STARTED_AT, FIRST_ENDED_AT, "100", "0.08", "4.2")
-        ));
-        stepDataJdbcRepository.upsertAllForManualRetry(List.of(
-            row(member, request, FIRST_STARTED_AT, FIRST_ENDED_AT, "350", "0.28", "14.7")
-        ));
+        stepDataJdbcRepository.upsertAll(List.of(row(member, request, FIRST_STARTED_AT, FIRST_ENDED_AT, "100", "0.08", "4.2")));
+        stepDataJdbcRepository.upsertAllForManualRetry(List.of(row(member, request, FIRST_STARTED_AT, FIRST_ENDED_AT, "350", "0.28", "14.7")));
 
         HealthStepDataEntity reprocessedData = findFirstStepData(member.getId());
         assertThat(reprocessedData.getCollectionRequest().getId()).isEqualTo(request.getId());
@@ -107,12 +99,8 @@ class HealthStepDataJdbcRepositoryTest {
         HealthDataCollectionRequestEntity olderRequest = saveRequest(member);
         HealthDataCollectionRequestEntity newerRequest = saveRequest(member);
 
-        stepDataJdbcRepository.upsertAll(List.of(
-            row(member, newerRequest, FIRST_STARTED_AT, FIRST_ENDED_AT, "350", "0.28", "14.7")
-        ));
-        stepDataJdbcRepository.upsertAllForManualRetry(List.of(
-            row(member, olderRequest, FIRST_STARTED_AT, FIRST_ENDED_AT, "50", "0.04", "2.1")
-        ));
+        stepDataJdbcRepository.upsertAll(List.of(row(member, newerRequest, FIRST_STARTED_AT, FIRST_ENDED_AT, "350", "0.28", "14.7")));
+        stepDataJdbcRepository.upsertAllForManualRetry(List.of(row(member, olderRequest, FIRST_STARTED_AT, FIRST_ENDED_AT, "50", "0.04", "2.1")));
 
         HealthStepDataEntity keptData = findFirstStepData(member.getId());
         assertThat(keptData.getCollectionRequest().getId()).isEqualTo(newerRequest.getId());
@@ -140,47 +128,18 @@ class HealthStepDataJdbcRepositoryTest {
 
     private MemberEntity saveMember() {
         String recordKey = UUID.randomUUID().toString();
-        return memberRepository.saveAndFlush(
-            MemberEntity.create(
-                "홍길동",
-                "길동",
-                "member-" + recordKey + "@example.com",
-                "encoded-password",
-                recordKey
-            )
-        );
+        return memberRepository.saveAndFlush(MemberEntity.create("홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
     }
 
     private HealthDataCollectionRequestEntity saveRequest(MemberEntity member) {
-        return collectionRequestRepository.saveAndFlush(
-            HealthDataCollectionRequestEntity.create(
-                member,
-                HealthDataType.STEPS,
-                HealthDataSource.SAMSUNG_HEALTH,
-                JsonNodeFactory.instance.objectNode()
-            )
-        );
+        return collectionRequestRepository.saveAndFlush(HealthDataCollectionRequestEntity.create(member,
+            HealthDataType.STEPS, HealthDataSource.SAMSUNG_HEALTH, JsonNodeFactory.instance.objectNode()));
     }
 
-    private HealthStepDataUpsertRow row(
-        MemberEntity member,
-        HealthDataCollectionRequestEntity request,
-        Instant startedAt,
-        Instant endedAt,
-        String steps,
-        String distance,
-        String calories
-    ) {
-        return new HealthStepDataUpsertRow(
-            member.getId(),
-            request.getId(),
-            HealthDataSource.SAMSUNG_HEALTH,
-            startedAt,
-            endedAt,
-            new BigDecimal(steps),
-            new BigDecimal(distance),
-            new BigDecimal(calories)
-        );
+    private HealthStepDataUpsertRow row(MemberEntity member, HealthDataCollectionRequestEntity request, Instant startedAt,
+        Instant endedAt, String steps, String distance, String calories) {
+        return new HealthStepDataUpsertRow(member.getId(), request.getId(), HealthDataSource.SAMSUNG_HEALTH, startedAt,
+            endedAt, new BigDecimal(steps), new BigDecimal(distance), new BigDecimal(calories));
     }
 
     private List<HealthStepDataEntity> findAllStepData(Long memberId) {

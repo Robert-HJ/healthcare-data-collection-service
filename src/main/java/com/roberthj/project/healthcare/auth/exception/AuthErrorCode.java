@@ -12,7 +12,6 @@ public enum AuthErrorCode implements ErrorCode {
     EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "AUTH004", "이미 사용 중인 이메일입니다."),
     ;
 
-
     private final HttpStatusCode httpStatusCode;
     private final String errorCode;
     private final String errorMessage;

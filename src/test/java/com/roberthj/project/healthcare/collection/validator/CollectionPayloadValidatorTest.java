@@ -19,8 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CollectionPayloadValidatorTest {
 
-    private static final String FIXTURE_PATH =
-        "/fixtures/collection/samsung-health-valid.json";
+    private static final String FIXTURE_PATH = "/fixtures/collection/samsung-health-valid.json";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final CollectionPayloadValidator validator = new CollectionPayloadValidator(
@@ -45,9 +44,7 @@ class CollectionPayloadValidatorTest {
             .put("name", "UnknownHealth");
 
         assertThatThrownBy(() -> validator.validateMetadata(payload))
-            .isInstanceOfSatisfying(CollectionException.class, exception ->
-                assertThat(exception.getErrorCode()).isEqualTo(INVALID_PAYLOAD)
-            );
+            .isInstanceOfSatisfying(CollectionException.class, exception -> assertThat(exception.getErrorCode()).isEqualTo(INVALID_PAYLOAD));
     }
 
     @Test
@@ -60,9 +57,7 @@ class CollectionPayloadValidatorTest {
     }
 
     private ObjectNode loadPayload() throws JacksonException {
-        InputStream inputStream = Objects.requireNonNull(
-            getClass().getResourceAsStream(FIXTURE_PATH)
-        );
+        InputStream inputStream = Objects.requireNonNull(getClass().getResourceAsStream(FIXTURE_PATH));
         return (ObjectNode) objectMapper.readTree(inputStream);
     }
 }

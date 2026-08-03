@@ -47,11 +47,7 @@ public class HealthDataCollectionRequestEntity extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(
-        name = "member_id",
-        nullable = false,
-        updatable = false
-    )
+    @JoinColumn(name = "member_id", nullable = false, updatable = false)
     private MemberEntity member;
 
     @Enumerated(EnumType.STRING)
@@ -76,12 +72,7 @@ public class HealthDataCollectionRequestEntity extends BaseEntity {
     @Column(length = 1000)
     private String errorMessage;
 
-    private HealthDataCollectionRequestEntity(
-        MemberEntity member,
-        HealthDataType dataType,
-        HealthDataSource source,
-        JsonNode payload
-    ) {
+    private HealthDataCollectionRequestEntity(MemberEntity member, HealthDataType dataType, HealthDataSource source, JsonNode payload) {
         this.member = member;
         this.dataType = dataType;
         this.source = source;
@@ -90,12 +81,7 @@ public class HealthDataCollectionRequestEntity extends BaseEntity {
         this.retryCount = 0;
     }
 
-    public static HealthDataCollectionRequestEntity create(
-        MemberEntity member,
-        HealthDataType dataType,
-        HealthDataSource source,
-        JsonNode payload
-    ) {
+    public static HealthDataCollectionRequestEntity create(MemberEntity member, HealthDataType dataType, HealthDataSource source, JsonNode payload) {
         return new HealthDataCollectionRequestEntity(member, dataType, source, payload);
     }
 

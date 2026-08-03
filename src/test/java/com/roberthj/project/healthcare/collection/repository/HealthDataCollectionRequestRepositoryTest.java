@@ -38,22 +38,11 @@ class HealthDataCollectionRequestRepositoryTest {
     @Test
     void saveAndLoadJsonPayload() {
         String recordKey = UUID.randomUUID().toString();
-        MemberEntity member = memberRepository.save(
-            MemberEntity.create(
-                "홍길동",
-                "길동",
-                "member-" + recordKey + "@example.com",
-                "encoded-password",
-                recordKey
-            )
-        );
+        MemberEntity member = memberRepository.save(MemberEntity.create(
+            "홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
         ObjectNode payload = createPayload(recordKey);
-        HealthDataCollectionRequestEntity request = HealthDataCollectionRequestEntity.create(
-            member,
-            HealthDataType.STEPS,
-            HealthDataSource.SAMSUNG_HEALTH,
-            payload
-        );
+        HealthDataCollectionRequestEntity request = HealthDataCollectionRequestEntity.create(member,
+            HealthDataType.STEPS, HealthDataSource.SAMSUNG_HEALTH, payload);
 
         HealthDataCollectionRequestEntity savedRequest = collectionRequestRepository.saveAndFlush(request);
         Long requestId = savedRequest.getId();

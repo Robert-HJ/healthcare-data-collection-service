@@ -73,8 +73,7 @@ class HealthKitStepsProcessorTest {
 
         assertThat(processor.format()).isEqualTo(new HealthDataFormat(HealthDataSource.HEALTH_KIT, HealthDataType.STEPS));
         assertThat(rows).hasSize(2);
-        assertThat(startedAtValuesCaptor.getValue()).containsExactly(
-            Instant.parse("2024-11-14T21:20:00Z"), Instant.parse("2024-11-14T23:00:00Z"));
+        assertThat(startedAtValuesCaptor.getValue()).containsExactly(Instant.parse("2024-11-14T21:20:00Z"), Instant.parse("2024-11-14T23:00:00Z"));
 
         HealthStepDataUpsertRow firstData = rows.get(0);
         assertThat(firstData.memberId()).isEqualTo(1L);

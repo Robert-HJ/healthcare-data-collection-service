@@ -54,18 +54,8 @@ class HealthDataCollectionServiceTest {
         Long memberId = 1L;
         String recordKey = "record-key";
         JsonNode payload = mock(JsonNode.class);
-        CollectionPayloadMetadata metadata = new CollectionPayloadMetadata(
-            recordKey,
-            HealthDataType.STEPS,
-            HealthDataSource.SAMSUNG_HEALTH
-        );
-        MemberEntity member = MemberEntity.create(
-            "홍길동",
-            "길동",
-            "member@example.com",
-            "encoded-password",
-            recordKey
-        );
+        CollectionPayloadMetadata metadata = new CollectionPayloadMetadata(recordKey, HealthDataType.STEPS, HealthDataSource.SAMSUNG_HEALTH);
+        MemberEntity member = MemberEntity.create("홍길동", "길동", "member@example.com", "encoded-password", recordKey);
         HealthDataCollectionRequestEntity savedRequest = mock(HealthDataCollectionRequestEntity.class);
 
         when(payloadValidator.validateMetadata(payload)).thenReturn(metadata);
@@ -75,14 +65,9 @@ class HealthDataCollectionServiceTest {
         when(savedRequest.getId()).thenReturn(10L);
         when(savedRequest.getStatus()).thenReturn(PENDING);
 
-        HealthDataCollectionResponse response = collectionService.collect(
-            memberId,
-            recordKey,
-            payload
-        );
+        HealthDataCollectionResponse response = collectionService.collect(memberId, recordKey, payload);
 
-        ArgumentCaptor<HealthDataCollectionRequestEntity> requestCaptor =
-            ArgumentCaptor.forClass(HealthDataCollectionRequestEntity.class);
+        ArgumentCaptor<HealthDataCollectionRequestEntity> requestCaptor = ArgumentCaptor.forClass(HealthDataCollectionRequestEntity.class);
         verify(payloadValidator).validateEntries(metadata.format(), payload);
         verify(collectionRequestRepository).save(requestCaptor.capture());
         verify(eventPublisher).publishEvent(new HealthDataCollectionRequestSavedEvent(10L));
@@ -100,18 +85,12 @@ class HealthDataCollectionServiceTest {
     @Test
     void rejectPayloadWithDifferentRecordKeyBeforeEntryValidation() {
         JsonNode payload = mock(JsonNode.class);
-        CollectionPayloadMetadata metadata = new CollectionPayloadMetadata(
-            "other-record-key",
-            HealthDataType.STEPS,
-            HealthDataSource.SAMSUNG_HEALTH
-        );
+        CollectionPayloadMetadata metadata = new CollectionPayloadMetadata("other-record-key", HealthDataType.STEPS, HealthDataSource.SAMSUNG_HEALTH);
 
         when(payloadValidator.validateMetadata(payload)).thenReturn(metadata);
 
         assertThatThrownBy(() -> collectionService.collect(1L, "user-record-key", payload))
-            .isInstanceOfSatisfying(CollectionException.class, exception ->
-                assertThat(exception.getErrorCode()).isEqualTo(RECORD_KEY_ACCESS_DENIED)
-            );
+            .isInstanceOfSatisfying(CollectionException.class, exception -> assertThat(exception.getErrorCode()).isEqualTo(RECORD_KEY_ACCESS_DENIED));
 
         verify(payloadValidator, never()).validateEntries(any(), any());
         verifyNoInteractions(memberService, collectionRequestRepository);
@@ -120,18 +99,12 @@ class HealthDataCollectionServiceTest {
     @Test
     void rejectPayloadWhenUserRecordKeyIsMissing() {
         JsonNode payload = mock(JsonNode.class);
-        CollectionPayloadMetadata metadata = new CollectionPayloadMetadata(
-            "payload-record-key",
-            HealthDataType.STEPS,
-            HealthDataSource.SAMSUNG_HEALTH
-        );
+        CollectionPayloadMetadata metadata = new CollectionPayloadMetadata("payload-record-key", HealthDataType.STEPS, HealthDataSource.SAMSUNG_HEALTH);
 
         when(payloadValidator.validateMetadata(payload)).thenReturn(metadata);
 
         assertThatThrownBy(() -> collectionService.collect(1L, null, payload))
-            .isInstanceOfSatisfying(CollectionException.class, exception ->
-                assertThat(exception.getErrorCode()).isEqualTo(RECORD_KEY_ACCESS_DENIED)
-            );
+            .isInstanceOfSatisfying(CollectionException.class, exception -> assertThat(exception.getErrorCode()).isEqualTo(RECORD_KEY_ACCESS_DENIED));
 
         verify(payloadValidator, never()).validateEntries(any(), any());
         verifyNoInteractions(memberService, collectionRequestRepository);

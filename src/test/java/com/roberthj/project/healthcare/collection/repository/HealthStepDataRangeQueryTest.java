@@ -69,13 +69,12 @@ class HealthStepDataRangeQueryTest {
 
     private MemberEntity saveMember() {
         String recordKey = UUID.randomUUID().toString();
-        return memberRepository.saveAndFlush(
-            MemberEntity.create("홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
+        return memberRepository.saveAndFlush(MemberEntity.create("홍길동", "길동", "member-" + recordKey + "@example.com", "encoded-password", recordKey));
     }
 
     private HealthDataCollectionRequestEntity saveRequest(MemberEntity member, HealthDataSource source) {
-        return collectionRequestRepository.saveAndFlush(
-            HealthDataCollectionRequestEntity.create(member, HealthDataType.STEPS, source, JsonNodeFactory.instance.objectNode()));
+        return collectionRequestRepository.saveAndFlush(HealthDataCollectionRequestEntity.create(
+            member, HealthDataType.STEPS, source, JsonNodeFactory.instance.objectNode()));
     }
 
     private HealthStepDataUpsertRow stepData(MemberEntity member, HealthDataCollectionRequestEntity request, HealthDataSource source,

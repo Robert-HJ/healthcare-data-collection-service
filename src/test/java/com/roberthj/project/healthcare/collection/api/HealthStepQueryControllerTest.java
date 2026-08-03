@@ -43,8 +43,7 @@ class HealthStepQueryControllerTest {
     void queryDailyAggregationsWithYearMonthRequestParameter() throws Exception {
         String token = accessTokenIssuer.issue(1L, "record-key").value();
         when(queryService.getDaily(1L, "record-key", "record-key", YearMonth.of(2026, 7)))
-            .thenReturn(List.of(new HealthStepDailyResponse(
-                LocalDate.of(2026, 7, 1), SAMSUNG_HEALTH, 124L, new BigDecimal("1.23"), new BigDecimal("45.6"))));
+            .thenReturn(List.of(new HealthStepDailyResponse(LocalDate.of(2026, 7, 1), SAMSUNG_HEALTH, 124L, new BigDecimal("1.23"), new BigDecimal("45.6"))));
 
         mockMvc.perform(get("/api/health-data/steps/daily")
                 .header("Authorization", "Bearer " + token)
@@ -62,8 +61,7 @@ class HealthStepQueryControllerTest {
     void queryMonthlyAggregationsWithYearRequestParameter() throws Exception {
         String token = accessTokenIssuer.issue(1L, "record-key").value();
         when(queryService.getMonthly(1L, "record-key", "record-key", 2026))
-            .thenReturn(List.of(new HealthStepMonthlyResponse(
-                YearMonth.of(2026, 7), HEALTH_KIT, 11L, new BigDecimal("2.5"), BigDecimal.ZERO)));
+            .thenReturn(List.of(new HealthStepMonthlyResponse(YearMonth.of(2026, 7), HEALTH_KIT, 11L, new BigDecimal("2.5"), BigDecimal.ZERO)));
 
         mockMvc.perform(get("/api/health-data/steps/monthly")
                 .header("Authorization", "Bearer " + token)

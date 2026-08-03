@@ -59,8 +59,7 @@ public class HealthStepQueryService {
     }
 
     private HealthStepDailyResponse toDailyResponse(HealthStepDailyAggregationRow row) {
-        return new HealthStepDailyResponse(row.date(), row.source(), roundSteps(row.steps()),
-            normalize(row.distance()), normalize(row.calories()));
+        return new HealthStepDailyResponse(row.date(), row.source(), roundSteps(row.steps()), normalize(row.distance()), normalize(row.calories()));
     }
 
     private HealthStepMonthlyResponse toMonthlyResponse(int year, HealthStepMonthlyAggregationRow row) {

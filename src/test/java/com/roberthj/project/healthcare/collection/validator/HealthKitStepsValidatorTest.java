@@ -16,8 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class HealthKitStepsValidatorTest {
 
-    private static final String FIXTURE_PATH =
-        "/fixtures/collection/health-kit-valid.json";
+    private static final String FIXTURE_PATH = "/fixtures/collection/health-kit-valid.json";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final HealthKitStepsValidator validator = new HealthKitStepsValidator();
@@ -55,9 +54,7 @@ class HealthKitStepsValidatorTest {
     }
 
     private ObjectNode loadPayload() throws JacksonException {
-        InputStream inputStream = Objects.requireNonNull(
-            getClass().getResourceAsStream(FIXTURE_PATH)
-        );
+        InputStream inputStream = Objects.requireNonNull(getClass().getResourceAsStream(FIXTURE_PATH));
         return (ObjectNode) objectMapper.readTree(inputStream);
     }
 
@@ -71,8 +68,6 @@ class HealthKitStepsValidatorTest {
 
     private void assertInvalidPayload(ObjectNode payload) {
         assertThatThrownBy(() -> validator.validate(payload))
-            .isInstanceOfSatisfying(CollectionException.class, exception ->
-                assertThat(exception.getErrorCode()).isEqualTo(INVALID_PAYLOAD)
-            );
+            .isInstanceOfSatisfying(CollectionException.class, exception -> assertThat(exception.getErrorCode()).isEqualTo(INVALID_PAYLOAD));
     }
 }
