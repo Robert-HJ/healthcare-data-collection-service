@@ -67,12 +67,12 @@ public class HealthStepQueryService {
     }
 
     private HealthStepDailyResponse toDailyResponse(HealthStepDailyAggregationRow row) {
-        return new HealthStepDailyResponse(row.date(), row.source(), roundSteps(row.steps()), normalize(row.distance()), normalize(row.calories()));
+        return new HealthStepDailyResponse(row.date(), row.source(), roundSteps(row.steps()), roundMeasurement(row.distance()), roundMeasurement(row.calories()));
     }
 
     private HealthStepMonthlyResponse toMonthlyResponse(int year, HealthStepMonthlyAggregationRow row) {
         return new HealthStepMonthlyResponse(YearMonth.of(year, row.month()), row.source(), roundSteps(row.steps()),
-            normalize(row.distance()), normalize(row.calories()));
+            roundMeasurement(row.distance()), roundMeasurement(row.calories()));
     }
 
     private long roundSteps(BigDecimal steps) {
@@ -80,7 +80,7 @@ public class HealthStepQueryService {
         return steps.setScale(0, RoundingMode.HALF_UP).longValueExact();
     }
 
-    private BigDecimal normalize(BigDecimal value) {
-        return value.stripTrailingZeros();
+    private BigDecimal roundMeasurement(BigDecimal value) {
+        return value.setScale(2, RoundingMode.HALF_UP).stripTrailingZeros();
     }
 }

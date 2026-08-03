@@ -472,7 +472,7 @@ Samsung Health의 오프셋 없는 시각은 `Asia/Seoul`의 로컬 시각으로
 
 입력값은 `from`과 `to` 사이 구간 전체의 합계지만 자정 전후의 실제 활동 분포는 알 수 없습니다. 양쪽 날짜에 모두 포함하면 중복되고 시간 비율로 나누면 활동이 균일했다는 근거 없는 가정이 생기므로, 전체 값을 집계 타임존에서 `started_at`이 속한 날짜에 귀속합니다. `from == to`인 구간도 유효 데이터로 저장하고 같은 기준으로 집계합니다.
 
-걸음 수, 거리와 칼로리는 Java `BigDecimal`, MySQL `DECIMAL(30, 20)`로 저장하고 합산합니다. HealthKit의 소수 걸음 수도 개별 데이터에서 반올림하지 않습니다. 걸음 수는 최종 API 응답에서 합계에 대해 `HALF_UP`으로 한 번만 반올림하며, 거리와 칼로리는 불필요한 후행 0만 제거합니다.
+걸음 수, 거리와 칼로리는 Java `BigDecimal`, MySQL `DECIMAL(30, 20)`로 저장하고 합산합니다. HealthKit의 소수 걸음 수도 개별 데이터에서 반올림하지 않습니다. 최종 API 응답에서만 걸음 수는 정수로, 거리와 칼로리는 소수점 둘째 자리로 `HALF_UP` 반올림하며 불필요한 후행 0은 제거합니다.
 
 ### 인증 방식
 
@@ -520,15 +520,15 @@ GitHub Actions는 `main` 브랜치 푸시와 Pull Request마다 Java 17과 MySQL
     "date": "2024-11-15",
     "source": "SAMSUNG_HEALTH",
     "steps": 7243,
-    "distance": 5.4194896718,
-    "calories": 289.20995225
+    "distance": 5.42,
+    "calories": 289.21
   },
   {
     "date": "2024-11-16",
     "source": "SAMSUNG_HEALTH",
     "steps": 10717,
-    "distance": 8.0204797034,
-    "calories": 425.52994815
+    "distance": 8.02,
+    "calories": 425.53
   }
 ]
 ```
@@ -543,15 +543,15 @@ GitHub Actions는 `main` 브랜치 푸시와 Pull Request마다 Java 17과 MySQL
     "month": "2024-11",
     "source": "SAMSUNG_HEALTH",
     "steps": 124783,
-    "distance": 94.3420947854,
-    "calories": 5002.49943884
+    "distance": 94.34,
+    "calories": 5002.5
   },
   {
     "month": "2024-12",
     "source": "SAMSUNG_HEALTH",
     "steps": 115592,
-    "distance": 87.3763360755,
-    "calories": 4635.83958001
+    "distance": 87.38,
+    "calories": 4635.84
   }
 ]
 ```
@@ -560,14 +560,14 @@ GitHub Actions는 `main` 브랜치 푸시와 Pull Request마다 Java 17과 MySQL
 
 | Sample | Source | Month | Steps | Distance (km) | Calories (kcal) |
 | --- | --- | --- | ---: | ---: | ---: |
-| Samsung A | `SAMSUNG_HEALTH` | 2024-11 | 124,783 | 94.3420947854 | 5002.49943884 |
-| Samsung A | `SAMSUNG_HEALTH` | 2024-12 | 115,592 | 87.3763360755 | 4635.83958001 |
-| Samsung B | `SAMSUNG_HEALTH` | 2024-11 | 130,945 | 100.7192331351 | 4671.7693381 |
-| Samsung B | `SAMSUNG_HEALTH` | 2024-12 | 130,551 | 101.09696052554 | 4560.12960217 |
-| HealthKit A | `HEALTH_KIT` | 2024-11 | 115,958 | 92.7663207904854935201 | 0 |
-| HealthKit A | `HEALTH_KIT` | 2024-12 | 113,882 | 91.10571663768231181148 | 0 |
-| HealthKit B | `HEALTH_KIT` | 2024-11 | 136,245 | 108.9960000000000046117 | 0 |
-| HealthKit B | `HEALTH_KIT` | 2024-12 | 136,851 | 109.48080000000000509978 | 0 |
+| Samsung A | `SAMSUNG_HEALTH` | 2024-11 | 124,783 | 94.34 | 5002.5 |
+| Samsung A | `SAMSUNG_HEALTH` | 2024-12 | 115,592 | 87.38 | 4635.84 |
+| Samsung B | `SAMSUNG_HEALTH` | 2024-11 | 130,945 | 100.72 | 4671.77 |
+| Samsung B | `SAMSUNG_HEALTH` | 2024-12 | 130,551 | 101.1 | 4560.13 |
+| HealthKit A | `HEALTH_KIT` | 2024-11 | 115,958 | 92.77 | 0 |
+| HealthKit A | `HEALTH_KIT` | 2024-12 | 113,882 | 91.11 | 0 |
+| HealthKit B | `HEALTH_KIT` | 2024-11 | 136,245 | 109 | 0 |
+| HealthKit B | `HEALTH_KIT` | 2024-12 | 136,851 | 109.48 | 0 |
 
 ## 구현 중 발생한 문제와 해결
 

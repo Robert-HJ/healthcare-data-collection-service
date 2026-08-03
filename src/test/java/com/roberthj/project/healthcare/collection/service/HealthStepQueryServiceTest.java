@@ -71,6 +71,30 @@ class HealthStepQueryServiceTest {
     }
 
     @Test
+    void roundDailyMeasurementsToTwoDecimalPlaces() {
+        when(aggregationRepository.findDaily(1L, "Asia/Seoul", LocalDate.of(2026, 7, 1), LocalDate.of(2026, 8, 1)))
+            .thenReturn(List.of(new HealthStepDailyAggregationRow(LocalDate.of(2026, 7, 1), SAMSUNG_HEALTH,
+                BigDecimal.ONE, new BigDecimal("1.235"), new BigDecimal("45.674"))));
+
+        HealthStepDailyResponse response = queryService.getDaily(1L, "record-key", "record-key", YearMonth.of(2026, 7)).get(0);
+
+        assertThat(response.distance()).isEqualByComparingTo("1.24");
+        assertThat(response.calories()).isEqualByComparingTo("45.67");
+    }
+
+    @Test
+    void roundMonthlyMeasurementsToTwoDecimalPlaces() {
+        when(aggregationRepository.findMonthly(1L, "Asia/Seoul", LocalDate.of(2026, 1, 1), LocalDate.of(2027, 1, 1)))
+            .thenReturn(List.of(new HealthStepMonthlyAggregationRow(7, HEALTH_KIT, BigDecimal.ONE,
+                new BigDecimal("2.344"), new BigDecimal("9.995"))));
+
+        HealthStepMonthlyResponse response = queryService.getMonthly(1L, "record-key", "record-key", 2026).get(0);
+
+        assertThat(response.distance()).isEqualByComparingTo("2.34");
+        assertThat(response.calories()).isEqualByComparingTo("10");
+    }
+
+    @Test
     void useCurrentMonthAndYearInDefaultTimeZoneWhenPeriodIsMissing() {
         when(aggregationRepository.findDaily(1L, "Asia/Seoul", LocalDate.of(2027, 1, 1), LocalDate.of(2027, 2, 1)))
             .thenReturn(List.of());
