@@ -506,6 +506,8 @@ Kafka는 Worker 증가로 작업 조회·행 잠금 경합이 병목이 되거�
 | 동시성 | 실제 MySQL에서 `FOR UPDATE SKIP LOCKED`, 같은 그룹의 후속 요청 차단, 다른 그룹 병렬 선점 |
 | 조회 | 요청 기간과 기본 기간, Source별 정렬, 다른 `recordKey` 접근 거부, 응답 단계 반올림 |
 
+GitHub Actions는 `main` 브랜치 푸시와 Pull Request마다 Java 17과 MySQL 8.4 환경에서 전체 테스트를 실행합니다. CI의 MySQL과 JWT 설정은 실행이 끝나면 폐기되는 테스트 전용 값이며, 테스트 실패 시 HTML 리포트를 artifact로 보관합니다.
+
 ## Daily/Monthly 조회 결과
 
 아래 결과는 제공된 Samsung Health 입력 중 하나의 측정값을 유지하고, `recordkey`만 테스트 계정의 값으로 맞춰 수집한 뒤 기본 타임존 `Asia/Seoul`로 조회한 결과입니다. 제공된 원본 식별값은 공개하지 않습니다.
