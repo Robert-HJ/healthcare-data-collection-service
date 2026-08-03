@@ -25,14 +25,18 @@ public class HealthDataCollectionProcessingService {
 
     @Transactional
     public void process(Long requestId, boolean manual) {
+        // 1. 선점된 수집 요청과 Source, Data Type 조합에 맞는 처리기를 조회
         HealthDataCollectionRequestEntity request = getRequest(requestId);
         HealthDataProcessor processor = getProcessor(request);
 
+        // 2. 수동 재처리는 최신 요청으로 저장된 활동 데이터를 덮어쓰지 않는 별도 경로로 처리
         if (manual) {
             processor.reprocess(request);
         } else {
             processor.process(request);
         }
+
+        // 3. 활동 데이터와 집계 저장이 성공한 경우 같은 트랜잭션에서 요청을 완료 처리
         request.complete();
     }
 

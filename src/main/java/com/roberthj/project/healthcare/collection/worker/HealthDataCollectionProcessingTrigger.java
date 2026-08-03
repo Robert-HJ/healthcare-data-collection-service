@@ -15,11 +15,13 @@ public class HealthDataCollectionProcessingTrigger {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(HealthDataCollectionRequestSavedEvent event) {
+        // 1. 수집 요청 저장이 커밋된 이후 즉시 후속 처리를 요청
         worker.requestProcessing();
     }
 
     @Scheduled(fixedDelayString = "${healthcare.collection.worker.polling-interval}")
     public void poll() {
+        // 1. 이벤트 유실이나 미처리 요청을 주기적으로 다시 확인
         worker.requestProcessing();
     }
 }

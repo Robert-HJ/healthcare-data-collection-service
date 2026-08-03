@@ -38,6 +38,7 @@ public class SamsungHealthStepsProcessor extends AbstractHealthStepsProcessor {
     }
 
     private Instant toInstant(String value) {
+        // 1. 타임존이 없는 삼성 로컬 시각을 Asia/Seoul 기준 UTC 시각으로 변환
         return LocalDateTime.parse(value, DATE_TIME_FORMATTER).atZone(SOURCE_TIME_ZONE).toInstant();
     }
 }

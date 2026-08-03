@@ -33,15 +33,25 @@ abstract class AbstractHealthStepsProcessor implements HealthDataProcessor {
 
     @Override
     public final void process(HealthDataCollectionRequestEntity request) {
+        // 1. Source별 입력을 UTC와 BigDecimal 기반의 걸음 데이터로 정규화
         List<HealthStepDataUpsertRow> rows = createRows(request);
+
+        // 2. 정상 처리 순서에 따라 동일 활동 구간을 일괄 등록하거나 갱신
         stepDataRepository.upsertAll(rows);
+
+        // 3. 이번 요청이 영향을 준 시작 일자를 기준으로 일별 집계를 다시 계산
         aggregate(request.getMember(), rows);
     }
 
     @Override
     public final void reprocess(HealthDataCollectionRequestEntity request) {
+        // 1. 원본 요청을 동일한 규칙으로 다시 정규화
         List<HealthStepDataUpsertRow> rows = createRows(request);
+
+        // 2. 수동 재처리보다 나중 요청으로 갱신된 활동 데이터는 유지하면서 일괄 반영
         stepDataRepository.upsertAllForManualRetry(rows);
+
+        // 3. 실제 반영 결과를 기준으로 영향받은 일별 집계를 다시 계산
         aggregate(request.getMember(), rows);
     }
 
@@ -68,8 +78,11 @@ abstract class AbstractHealthStepsProcessor implements HealthDataProcessor {
         JsonNode entries = payload.path("data").path("entries");
         Map<StepDataIdentity, NormalizedStepData> normalizedData = new LinkedHashMap<>(entries.size());
 
+        // 1. 각 활동 구간을 Source별 규칙으로 정규화
         for (JsonNode entry : entries) {
             NormalizedStepData data = normalizeEntry(entry);
+
+            // 2. 한 요청 안의 동일한 from-to 구간은 마지막 값으로 정리
             normalizedData.put(new StepDataIdentity(data.startedAt(), data.endedAt()), data);
         }
 

@@ -50,6 +50,8 @@ public class HealthDataCollectionService {
         );
 
         HealthDataCollectionRequestEntity savedEntity = collectionRequestRepository.save(entity);
+
+        // 6. 커밋 이후 비동기 처리를 시작하도록 이벤트 발행
         eventPublisher.publishEvent(new HealthDataCollectionRequestSavedEvent(savedEntity.getId()));
 
         return HealthDataCollectionResponse.from(savedEntity);

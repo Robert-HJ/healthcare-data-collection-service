@@ -36,6 +36,7 @@ public class HealthKitStepsProcessor extends AbstractHealthStepsProcessor {
     }
 
     private Instant toInstant(String value) {
+        // 1. HealthKit 시각에 포함된 UTC 오프셋을 보존하여 UTC 시각으로 변환
         return OffsetDateTime.parse(value, DATE_TIME_FORMATTER).toInstant();
     }
 }

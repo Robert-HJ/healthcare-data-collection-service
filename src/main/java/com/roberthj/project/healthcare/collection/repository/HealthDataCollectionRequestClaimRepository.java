@@ -12,6 +12,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class HealthDataCollectionRequestClaimRepository {
 
+    // 1. 처리 가능한 상태와 재시도 조건을 만족하는 요청을 조회
+    // 2. 같은 member, source, dataType 그룹의 선행 요청이 남아 있으면 후속 요청을 제외
+    // 3. 다른 인스턴스가 잠근 요청은 건너뛰고 한 건만 선점
     private static final String SELECT_NEXT_REQUEST = """
         SELECT candidate.id
         FROM health_data_collection_request candidate

@@ -33,10 +33,12 @@ public class HealthDataCollectionWorker {
     }
 
     public void requestProcessing() {
+        // 1. 설정된 동시 실행 수만큼 작업 처리기를 요청
         for (int count = 0; count < workerConcurrency; count++) {
             try {
                 processingExecutor.execute(this::processRequests);
             } catch (TaskRejectedException exception) {
+                // 2. 실행 중인 작업이 스레드 풀을 채우고 있으면 중복 요청을 무시
                 return;
             } catch (Exception exception) {
                 log.error("건강 데이터 수집 작업 요청에 실패했습니다.", exception);
@@ -48,10 +50,15 @@ public class HealthDataCollectionWorker {
     private void processRequests() {
         try {
             while (true) {
+                // 1. 처리 가능한 요청 한 건을 별도 트랜잭션으로 선점
                 Optional<Long> requestId = requestStateService.claimNext();
+
+                // 2. 남은 요청이 없으면 현재 작업을 종료
                 if (requestId.isEmpty()) {
                     return;
                 }
+
+                // 3. 선점한 요청을 처리한 뒤 다음 요청을 계속 조회
                 processRequest(requestId.get());
             }
         } catch (Exception exception) {
@@ -61,9 +68,12 @@ public class HealthDataCollectionWorker {
 
     private void processRequest(Long requestId) {
         try {
+            // 1. 정규화, 활동 데이터 적재와 집계를 하나의 트랜잭션으로 처리
             processingService.process(requestId);
         } catch (Exception exception) {
             log.error("건강 데이터 수집 요청 처리에 실패했습니다. requestId={}", requestId, exception);
+
+            // 2. 처리 트랜잭션이 롤백되면 실패 상태를 별도 트랜잭션으로 기록
             recordFailure(requestId, exception);
         }
     }

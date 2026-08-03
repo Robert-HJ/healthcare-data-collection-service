@@ -28,6 +28,7 @@ public class HealthStepDataJdbcRepository {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP(6), UTC_TIMESTAMP(6)) AS incoming
         """;
 
+    // 1. 정상 처리는 그룹별 요청 순서가 보장되므로 현재 요청 값으로 갱신
     private static final String UPSERT_SQL = INSERT_SQL + """
         ON DUPLICATE KEY UPDATE
             collection_request_id = incoming.collection_request_id,
@@ -37,6 +38,7 @@ public class HealthStepDataJdbcRepository {
             updated_at = incoming.updated_at
         """;
 
+    // 2. 수동 재처리는 더 최신 요청으로 저장된 활동 값을 덮어쓰지 않도록 조건부 갱신
     private static final String MANUAL_RETRY_UPSERT_SQL = INSERT_SQL + """
         ON DUPLICATE KEY UPDATE
             steps = IF(
