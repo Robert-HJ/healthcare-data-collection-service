@@ -33,6 +33,11 @@ public class HealthDataCollectionRequestStateService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean claimForManualReprocessing(Long requestId) {
+        return claimRepository.claimForManualReprocessing(requestId, workerProperties.staleProcessingTimeout());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void fail(Long requestId, Exception exception) {
         HealthDataCollectionRequestEntity request = collectionRequestRepository.findById(requestId)
             .orElseThrow(() -> new CollectionException(COLLECTION_REQUEST_NOT_FOUND, requestId.toString()));

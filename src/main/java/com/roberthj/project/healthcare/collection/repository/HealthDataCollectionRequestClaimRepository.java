@@ -42,6 +42,13 @@ public class HealthDataCollectionRequestClaimRepository {
         WHERE id = ?
         """;
 
+    private static final String CLAIM_FOR_MANUAL_REPROCESSING = """
+        UPDATE health_data_collection_request
+        SET status = 'PROCESSING', updated_at = CURRENT_TIMESTAMP(6)
+        WHERE id = ?
+          AND (status <> 'PROCESSING' OR updated_at < DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL ? SECOND))
+        """;
+
     private final JdbcTemplate jdbcTemplate;
 
     public Optional<Long> findNextRequest(int maxRetryCount, Duration staleProcessingTimeout) {
@@ -52,5 +59,9 @@ public class HealthDataCollectionRequestClaimRepository {
 
     public void updateProcessing(Long requestId) {
         jdbcTemplate.update(UPDATE_PROCESSING, requestId);
+    }
+
+    public boolean claimForManualReprocessing(Long requestId, Duration staleProcessingTimeout) {
+        return jdbcTemplate.update(CLAIM_FOR_MANUAL_REPROCESSING, requestId, staleProcessingTimeout.toSeconds()) == 1;
     }
 }

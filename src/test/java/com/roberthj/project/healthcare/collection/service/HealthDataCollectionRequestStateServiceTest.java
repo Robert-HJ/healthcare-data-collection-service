@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Duration;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +44,15 @@ class HealthDataCollectionRequestStateServiceTest {
         requestStateService.claimNext();
 
         verify(claimRepository).updateProcessing(1L);
+    }
+
+    @Test
+    void claimRequestForManualReprocessing() {
+        when(claimRepository.claimForManualReprocessing(1L, Duration.ofMinutes(5))).thenReturn(true);
+
+        boolean claimed = requestStateService.claimForManualReprocessing(1L);
+
+        assertThat(claimed).isTrue();
     }
 
     @Test

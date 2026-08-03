@@ -110,6 +110,40 @@ class HealthDataCollectionRequestClaimRepositoryTest {
     }
 
     @Test
+    void claimPendingRequestForManualReprocessing() {
+        HealthDataCollectionRequestEntity request = saveRequest(saveMember());
+
+        boolean claimed = claimRepository.claimForManualReprocessing(request.getId(), STALE_PROCESSING_TIMEOUT);
+
+        assertThat(claimed).isTrue();
+        assertThat(findStatus(request.getId())).isEqualTo("PROCESSING");
+    }
+
+    @Test
+    void doNotClaimRecentlyProcessingRequestForManualReprocessing() {
+        HealthDataCollectionRequestEntity request = saveRequest(saveMember());
+        claimRepository.updateProcessing(request.getId());
+
+        boolean claimed = claimRepository.claimForManualReprocessing(request.getId(), STALE_PROCESSING_TIMEOUT);
+
+        assertThat(claimed).isFalse();
+    }
+
+    @Test
+    void claimStaleProcessingRequestForManualReprocessing() {
+        HealthDataCollectionRequestEntity request = saveRequest(saveMember());
+        jdbcTemplate.update("""
+            UPDATE health_data_collection_request
+            SET status = 'PROCESSING', updated_at = DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 10 MINUTE)
+            WHERE id = ?
+            """, request.getId());
+
+        boolean claimed = claimRepository.claimForManualReprocessing(request.getId(), STALE_PROCESSING_TIMEOUT);
+
+        assertThat(claimed).isTrue();
+    }
+
+    @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void skipLockedRequestAndDoNotClaimNextRequestInSameGroup() throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -160,6 +194,10 @@ class HealthDataCollectionRequestClaimRepositoryTest {
 
     private Optional<Long> findNextRequest() {
         return claimRepository.findNextRequest(MAX_RETRY_COUNT, STALE_PROCESSING_TIMEOUT);
+    }
+
+    private String findStatus(Long requestId) {
+        return jdbcTemplate.queryForObject("SELECT status FROM health_data_collection_request WHERE id = ?", String.class, requestId);
     }
 
     private <T> T executeInTransaction(Supplier<T> action) {
